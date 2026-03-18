@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join the Waitlist - OnteraAI</title>
+    <meta name="description" content="Sign up for early access to OnteraAI - the AI operating system for e-commerce sellers.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --bg-tertiary: #18181b;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent: #22c55e;
+            --accent-dim: #16a34a;
+            --accent-glow: rgba(34, 197, 94, 0.15);
+            --border: #27272a;
+            --border-light: #3f3f46;
+            --gradient-1: linear-gradient(135deg, #22c55e 0%, #10b981 50%, #06b6d4 100%);
+            --font-display: 'Syne', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-display);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Noise texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.25rem 2rem;
+            background: rgba(10, 10, 11, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Page Container */
+        .page-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+        }
+
+        .page-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 50% -10%, var(--accent-glow), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(6, 182, 212, 0.08), transparent);
+            pointer-events: none;
+        }
+
+        /* Form Container */
+        .form-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 640px;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+        }
+
+        .form-header h1 .gradient {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Form Styles */
+        .waitlist-form {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-field.full-width {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input,
+        .form-textarea {
+            padding: 0.875rem 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-family: var(--font-display);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Checkbox Styles */
+        .checkbox-field {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            grid-column: span 2;
+        }
+
+        .checkbox-wrapper {
+            flex-shrink: 0;
+            padding-top: 2px;
+        }
+
+        .form-checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .checkbox-content .form-label {
+            cursor: pointer;
+        }
+
+        .checkbox-description {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Submit Button */
+        .form-button-group {
+            margin-top: 2rem;
+            grid-column: span 2;
+        }
+
+        .form-submit {
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--accent);
+            color: var(--bg-primary);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-display);
+        }
+
+        .form-submit:hover {
+            background: var(--accent-dim);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--accent-glow);
+        }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--text-primary);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-field.full-width,
+            .checkbox-field,
+            .form-button-group {
+                grid-column: span 1;
+            }
+
+            .waitlist-form {
+                padding: 1.5rem;
+            }
+
+            .form-header h1 {
+                font-size: 2rem;
+            }
+
+            nav {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <span class="logo-dot"></span>
+                OnteraAI
+            </a>
+            <div class="nav-links">
+                <a href="/#features">Features</a>
+                <a href="/#pricing">Pricing</a>
+                <a href="/#how-it-works">How It Works</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="page-container">
+        <div class="page-bg"></div>
+        <div class="form-container">
+            <a href="/" class="back-link">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M13 8H3M3 8L8 3M3 8L8 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back to home
+            </a>
+            
+            <div class="form-header">
+                <h1>Join the <span class="gradient">Waitlist</span></h1>
+                <p>Be among the first to automate your e-commerce store with AI.</p>
+            </div>
+
+            <form class="waitlist-form" action="https://formspree.io/f/xeerpybv" method="POST">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label class="form-label" for="full-name">Full Name</label>
+                        <input
+                            class="form-input"
+                            id="full-name"
+                            name="full-name"
+                            placeholder="Enter your name"
+                            required
+                        />
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label" for="email-address">Email Address</label>
+                        <input
+                            class="form-input"
+                            id="email-address"
+                            name="email-address"
+                            type="email"
+                            placeholder="Enter your email address"
+                            required
+                        />
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label" for="phone-number">Phone Number</label>
+                        <input
+                            class="form-input"
+                            id="phone-number"
+                            name="phone-number"
+                            type="tel"
+                            placeholder="Optional"
+                        />
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label" for="platforms">Selling Platforms</label>
+                        <input
+                            class="form-input"
+                            id="platforms"
+                            name="platforms"
+                            placeholder="e.g., eBay, Amazon, Shopify"
+                        />
+                    </div>
+
+                    <div class="form-field full-width">
+                        <label class="form-label" for="store-details">Tell Us About Your Store</label>
+                        <textarea
+                            class="form-textarea"
+                            id="store-details"
+                            name="store-details"
+                            placeholder="How many orders/month? What's your biggest pain point?"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-field full-width">
+                        <label class="form-label" for="referral-source">How Did You Hear About Us?</label>
+                        <input
+                            class="form-input"
+                            id="referral-source"
+                            name="referral-source"
+                            placeholder="Optional"
+                        />
+                    </div>
+
+                    <div class="checkbox-field">
+                        <div class="checkbox-wrapper">
+                            <input
+                                class="form-checkbox"
+                                id="update-consent"
+                                name="update-consent"
+                                type="checkbox"
+                                value="yes"
+                                required
+                            />
+                        </div>
+                        <div class="checkbox-content">
+                            <label class="form-label" for="update-consent">
+                                Notify me when spots open up
+                            </label>
+                            <p class="checkbox-description">
+                                We'll email you when we're ready to onboard new sellers.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-field">
+                        <div class="checkbox-wrapper">
+                            <input
+                                class="form-checkbox"
+                                id="terms-privacy"
+                                name="terms-privacy"
+                                type="checkbox"
+                                value="yes"
+                                required
+                            />
+                        </div>
+                        <div class="checkbox-content">
+                            <label class="form-label" for="terms-privacy">
+                                I agree to the Terms & Privacy Policy
+                            </label>
+                            <p class="checkbox-description">
+                                We respect your privacy and won't spam you.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-button-group">
+                        <button class="form-submit" type="submit">
+                            Join the Waitlist
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M3 8H13M13 8L8 3M13 8L8 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
