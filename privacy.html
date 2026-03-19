@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - OnteraAI</title>
+    <meta name="description" content="OnteraAI Privacy Policy - How we collect, use, and protect your data.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo-icon-180.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --bg-tertiary: #18181b;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent: #22c55e;
+            --accent-dim: #16a34a;
+            --accent-glow: rgba(34, 197, 94, 0.15);
+            --border: #27272a;
+            --border-light: #3f3f46;
+            --gradient-1: linear-gradient(135deg, #22c55e 0%, #10b981 50%, #06b6d4 100%);
+            --font-display: 'Syne', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-display);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Noise texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.25rem 2rem;
+            background: rgba(10, 10, 11, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Content */
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .content h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .last-updated {
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-size: 0.9rem;
+        }
+
+        .content h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 3rem 0 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .content h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 2rem 0 0.75rem;
+        }
+
+        .content p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .content ul, .content ol {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        .content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .content a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .content a:hover {
+            text-decoration: underline;
+        }
+
+        .content strong {
+            color: var(--text-primary);
+        }
+
+        .highlight-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-box p {
+            margin: 0;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .footer-tagline {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .content h1 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <span class="logo-dot"></span>
+                OnteraAI
+            </a>
+            <div class="nav-links">
+                <a href="/#features">Features</a>
+                <a href="/#pricing">Pricing</a>
+                <a href="/#how-it-works">How It Works</a>
+                <a href="/waitlist.html">Join Waitlist</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="content">
+        <h1>Privacy Policy</h1>
+        <p class="last-updated">Last updated: March 18, 2026</p>
+
+        <div class="highlight-box">
+            <p><strong>The short version:</strong> We collect only what we need to make OnteraAI work for you. We never sell your data. We use industry-standard security to protect your information.</p>
+        </div>
+
+        <h2>1. Introduction</h2>
+        <p>OnteraAI ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our AI-powered e-commerce automation platform.</p>
+        <p>By using OnteraAI, you agree to the collection and use of information in accordance with this policy.</p>
+
+        <h2>2. Information We Collect</h2>
+        
+        <h3>Account Information</h3>
+        <p>When you create an OnteraAI account, we collect:</p>
+        <ul>
+            <li>Email address</li>
+            <li>Name (optional)</li>
+            <li>Password (encrypted)</li>
+            <li>Billing information (processed securely by our payment provider)</li>
+        </ul>
+
+        <h3>Connected Platform Data</h3>
+        <p>When you connect your e-commerce platforms (eBay, Amazon, Shopify, etc.), we access:</p>
+        <ul>
+            <li>Customer messages and inquiries</li>
+            <li>Order information and fulfillment data</li>
+            <li>Product listings and inventory</li>
+            <li>Sales and transaction data</li>
+            <li>Store settings and policies</li>
+        </ul>
+        <p><strong>Important:</strong> We use secure OAuth connections provided by each platform. We never see or store your platform passwords.</p>
+
+        <h3>Usage Data</h3>
+        <p>We automatically collect:</p>
+        <ul>
+            <li>Log data (IP address, browser type, pages visited)</li>
+            <li>Device information</li>
+            <li>Feature usage statistics</li>
+            <li>AI interaction history (messages sent, actions taken)</li>
+        </ul>
+
+        <h2>3. How We Use Your Information</h2>
+        <p>We use your information to:</p>
+        <ul>
+            <li><strong>Provide our service:</strong> Respond to customer messages, create listings, manage orders, and generate reports on your behalf</li>
+            <li><strong>Improve OnteraAI:</strong> Analyze usage patterns to enhance features and fix issues</li>
+            <li><strong>Communicate with you:</strong> Send service updates, daily briefings, and support responses</li>
+            <li><strong>Process payments:</strong> Handle subscription billing through our secure payment provider</li>
+            <li><strong>Ensure security:</strong> Detect and prevent fraud, abuse, and security incidents</li>
+        </ul>
+
+        <h2>4. Data Sharing</h2>
+        <p>We do <strong>not</strong> sell, rent, or trade your personal information.</p>
+        <p>We may share data with:</p>
+        <ul>
+            <li><strong>Service providers:</strong> Cloud hosting (AWS), payment processing, and analytics tools that help us operate OnteraAI</li>
+            <li><strong>Connected platforms:</strong> The e-commerce platforms you authorize us to access (we send data back to them on your behalf, like customer message replies)</li>
+            <li><strong>Legal requirements:</strong> When required by law or to protect our rights</li>
+        </ul>
+
+        <h2>5. Data Security</h2>
+        <p>We implement industry-standard security measures:</p>
+        <ul>
+            <li>Encryption in transit (TLS/SSL) and at rest</li>
+            <li>Secure OAuth 2.0 for platform connections</li>
+            <li>Regular security audits</li>
+            <li>Access controls and authentication</li>
+            <li>Isolated customer environments</li>
+        </ul>
+
+        <h2>6. Data Retention</h2>
+        <p>We retain your data for as long as your account is active. When you delete your account:</p>
+        <ul>
+            <li>Your account information is deleted within 30 days</li>
+            <li>OAuth tokens are revoked immediately</li>
+            <li>Aggregated, anonymized data may be retained for analytics</li>
+        </ul>
+
+        <h2>7. Your Rights</h2>
+        <p>You have the right to:</p>
+        <ul>
+            <li><strong>Access:</strong> Request a copy of your data</li>
+            <li><strong>Correct:</strong> Update inaccurate information</li>
+            <li><strong>Delete:</strong> Request deletion of your account and data</li>
+            <li><strong>Disconnect:</strong> Revoke platform connections at any time</li>
+            <li><strong>Export:</strong> Download your data in a portable format</li>
+        </ul>
+        <p>To exercise these rights, contact us at <a href="mailto:hello@ontera.io">hello@ontera.io</a>.</p>
+
+        <h2>8. Third-Party Platforms</h2>
+        <p>OnteraAI integrates with third-party e-commerce platforms (eBay, Amazon, Shopify, etc.). Each platform has its own privacy policy governing how they handle your data. We encourage you to review their policies:</p>
+        <ul>
+            <li><a href="https://www.ebay.com/help/policies/member-behaviour-policies/user-privacy-notice-privacy-policy?id=4260" target="_blank" rel="noopener">eBay Privacy Policy</a></li>
+            <li><a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=201909010" target="_blank" rel="noopener">Amazon Privacy Notice</a></li>
+            <li><a href="https://www.shopify.com/legal/privacy" target="_blank" rel="noopener">Shopify Privacy Policy</a></li>
+        </ul>
+
+        <h2>9. Cookies</h2>
+        <p>We use essential cookies to:</p>
+        <ul>
+            <li>Keep you logged in</li>
+            <li>Remember your preferences</li>
+            <li>Ensure security</li>
+        </ul>
+        <p>We do not use advertising or tracking cookies.</p>
+
+        <h2>10. Children's Privacy</h2>
+        <p>OnteraAI is not intended for users under 18 years of age. We do not knowingly collect data from children.</p>
+
+        <h2>11. Changes to This Policy</h2>
+        <p>We may update this Privacy Policy from time to time. We will notify you of significant changes via email or through the OnteraAI dashboard.</p>
+
+        <h2>12. Contact Us</h2>
+        <p>If you have questions about this Privacy Policy or our data practices, contact us:</p>
+        <ul>
+            <li>Email: <a href="mailto:hello@ontera.io">hello@ontera.io</a></li>
+        </ul>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="footer-logo">OnteraAI</div>
+                <div class="footer-tagline">The foundation your business runs on.</div>
+            </div>
+            <div class="footer-links">
+                <a href="mailto:hello@ontera.io">Contact</a>
+                <a href="/privacy.html">Privacy</a>
+                <a href="/terms.html">Terms</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

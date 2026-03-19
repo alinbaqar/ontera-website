@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - OnteraAI</title>
+    <meta name="description" content="OnteraAI Terms of Service - The rules and guidelines for using our AI-powered e-commerce automation platform.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo-icon-180.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --bg-tertiary: #18181b;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent: #22c55e;
+            --accent-dim: #16a34a;
+            --accent-glow: rgba(34, 197, 94, 0.15);
+            --border: #27272a;
+            --border-light: #3f3f46;
+            --gradient-1: linear-gradient(135deg, #22c55e 0%, #10b981 50%, #06b6d4 100%);
+            --font-display: 'Syne', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-display);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Noise texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.25rem 2rem;
+            background: rgba(10, 10, 11, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Content */
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .content h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .last-updated {
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-size: 0.9rem;
+        }
+
+        .content h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 3rem 0 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .content h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 2rem 0 0.75rem;
+        }
+
+        .content p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .content ul, .content ol {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        .content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .content a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .content a:hover {
+            text-decoration: underline;
+        }
+
+        .content strong {
+            color: var(--text-primary);
+        }
+
+        .highlight-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-box p {
+            margin: 0;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .footer-tagline {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .content h1 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <span class="logo-dot"></span>
+                OnteraAI
+            </a>
+            <div class="nav-links">
+                <a href="/#features">Features</a>
+                <a href="/#pricing">Pricing</a>
+                <a href="/#how-it-works">How It Works</a>
+                <a href="/waitlist.html">Join Waitlist</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="content">
+        <h1>Terms of Service</h1>
+        <p class="last-updated">Last updated: March 18, 2026</p>
+
+        <div class="highlight-box">
+            <p><strong>The short version:</strong> Use OnteraAI responsibly, pay for your subscription, and don't do anything illegal. We'll provide reliable service, protect your data, and be transparent about how everything works.</p>
+        </div>
+
+        <h2>1. Agreement to Terms</h2>
+        <p>By accessing or using OnteraAI ("Service"), you agree to be bound by these Terms of Service ("Terms"). If you disagree with any part of these terms, you may not access the Service.</p>
+        <p>These Terms apply to all visitors, users, and customers of the Service.</p>
+
+        <h2>2. Description of Service</h2>
+        <p>OnteraAI is an AI-powered automation platform for e-commerce sellers. The Service includes:</p>
+        <ul>
+            <li>Automated customer message responses</li>
+            <li>Listing creation and optimization tools</li>
+            <li>Order management and fulfillment tracking</li>
+            <li>Refund processing automation</li>
+            <li>Analytics and daily briefings</li>
+            <li>Integration with third-party e-commerce platforms (eBay, Amazon, Shopify, etc.)</li>
+        </ul>
+        <p>We reserve the right to modify, suspend, or discontinue any part of the Service at any time with reasonable notice.</p>
+
+        <h2>3. Account Registration</h2>
+        <p>To use OnteraAI, you must:</p>
+        <ul>
+            <li>Be at least 18 years old</li>
+            <li>Provide accurate and complete registration information</li>
+            <li>Maintain the security of your account credentials</li>
+            <li>Notify us immediately of any unauthorized account access</li>
+            <li>Accept responsibility for all activities under your account</li>
+        </ul>
+        <p>We reserve the right to refuse service, terminate accounts, or remove content at our sole discretion.</p>
+
+        <h2>4. Platform Connections</h2>
+        <p>OnteraAI connects to third-party e-commerce platforms via OAuth authorization. By connecting your platforms:</p>
+        <ul>
+            <li>You authorize us to access and act on your behalf within the scope of permissions granted</li>
+            <li>You confirm you have the right to connect these accounts</li>
+            <li>You understand we will read messages, orders, listings, and other data necessary to provide the Service</li>
+            <li>You understand we will send messages, create listings, and take other actions on your behalf as configured</li>
+        </ul>
+        <p>You may disconnect any platform at any time through your OnteraAI dashboard or directly through the connected platform's settings.</p>
+
+        <h2>5. Subscription and Payment</h2>
+        <h3>Pricing</h3>
+        <p>OnteraAI offers subscription plans as displayed on our pricing page. Prices are subject to change with 30 days' notice.</p>
+        
+        <h3>Billing</h3>
+        <ul>
+            <li>Subscriptions are billed monthly in advance</li>
+            <li>Payment is due at the start of each billing cycle</li>
+            <li>All fees are non-refundable except as required by law</li>
+            <li>Failed payments may result in service suspension</li>
+        </ul>
+
+        <h3>Cancellation</h3>
+        <p>You may cancel your subscription at any time. Cancellation takes effect at the end of your current billing period. No partial refunds are provided for unused time.</p>
+
+        <h2>6. Acceptable Use</h2>
+        <p>You agree NOT to use OnteraAI to:</p>
+        <ul>
+            <li>Violate any laws or regulations</li>
+            <li>Violate the terms of service of connected platforms (eBay, Amazon, etc.)</li>
+            <li>Send spam, fraudulent, or misleading messages</li>
+            <li>Harass, abuse, or harm others</li>
+            <li>Infringe on intellectual property rights</li>
+            <li>Attempt to gain unauthorized access to our systems</li>
+            <li>Reverse engineer, decompile, or disassemble the Service</li>
+            <li>Use the Service to compete with OnteraAI</li>
+            <li>Resell or redistribute access to the Service</li>
+        </ul>
+        <p>Violation of these terms may result in immediate account termination without refund.</p>
+
+        <h2>7. AI-Generated Content</h2>
+        <p>OnteraAI uses artificial intelligence to generate messages, listings, and other content. You acknowledge that:</p>
+        <ul>
+            <li>AI-generated content may contain errors or inaccuracies</li>
+            <li>You are responsible for reviewing and approving AI actions (unless running in autonomous mode)</li>
+            <li>You retain responsibility for all content sent or published through your connected accounts</li>
+            <li>We do not guarantee any specific outcomes from using AI-generated content</li>
+        </ul>
+
+        <h2>8. Intellectual Property</h2>
+        <p>The Service, including its original content, features, and functionality, is owned by OnteraAI and protected by international copyright, trademark, and other intellectual property laws.</p>
+        <p>You retain ownership of your data and content. By using the Service, you grant us a limited license to use your content solely to provide and improve the Service.</p>
+
+        <h2>9. Limitation of Liability</h2>
+        <p>To the maximum extent permitted by law:</p>
+        <ul>
+            <li>OnteraAI is provided "as is" without warranties of any kind</li>
+            <li>We do not guarantee uninterrupted or error-free service</li>
+            <li>We are not liable for any indirect, incidental, special, or consequential damages</li>
+            <li>Our total liability shall not exceed the amount you paid us in the 12 months preceding the claim</li>
+            <li>We are not responsible for actions taken by connected third-party platforms</li>
+        </ul>
+
+        <h2>10. Indemnification</h2>
+        <p>You agree to indemnify and hold harmless OnteraAI, its officers, directors, employees, and agents from any claims, damages, losses, or expenses arising from:</p>
+        <ul>
+            <li>Your use of the Service</li>
+            <li>Your violation of these Terms</li>
+            <li>Your violation of any third-party rights</li>
+            <li>Content you submit or transmit through the Service</li>
+        </ul>
+
+        <h2>11. Third-Party Services</h2>
+        <p>OnteraAI integrates with third-party services (eBay, Amazon, Shopify, payment processors, etc.). These services have their own terms and policies that you must also comply with. We are not responsible for the availability, accuracy, or practices of third-party services.</p>
+
+        <h2>12. Service Availability</h2>
+        <p>We strive for high availability but do not guarantee 100% uptime. We may perform maintenance, updates, or experience outages. We will make reasonable efforts to notify you of planned downtime in advance.</p>
+
+        <h2>13. Modifications to Terms</h2>
+        <p>We reserve the right to modify these Terms at any time. We will notify you of material changes via email or through the Service. Continued use of the Service after changes constitutes acceptance of the new Terms.</p>
+
+        <h2>14. Termination</h2>
+        <p>We may terminate or suspend your account immediately, without prior notice, for:</p>
+        <ul>
+            <li>Violation of these Terms</li>
+            <li>Suspected fraud or illegal activity</li>
+            <li>Non-payment of fees</li>
+            <li>Any reason at our sole discretion</li>
+        </ul>
+        <p>Upon termination, your right to use the Service ceases immediately. We may delete your data in accordance with our Privacy Policy.</p>
+
+        <h2>15. Governing Law</h2>
+        <p>These Terms shall be governed by and construed in accordance with the laws of the United States, without regard to conflict of law provisions.</p>
+
+        <h2>16. Dispute Resolution</h2>
+        <p>Any disputes arising from these Terms or the Service shall first be attempted to be resolved through good-faith negotiation. If negotiation fails, disputes shall be resolved through binding arbitration in accordance with the rules of the American Arbitration Association.</p>
+
+        <h2>17. Severability</h2>
+        <p>If any provision of these Terms is found to be unenforceable, the remaining provisions will continue in full force and effect.</p>
+
+        <h2>18. Contact Us</h2>
+        <p>If you have questions about these Terms of Service, contact us:</p>
+        <ul>
+            <li>Email: <a href="mailto:hello@ontera.io">hello@ontera.io</a></li>
+        </ul>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="footer-logo">OnteraAI</div>
+                <div class="footer-tagline">The foundation your business runs on.</div>
+            </div>
+            <div class="footer-links">
+                <a href="mailto:hello@ontera.io">Contact</a>
+                <a href="/privacy.html">Privacy</a>
+                <a href="/terms.html">Terms</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
