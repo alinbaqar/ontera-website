@@ -818,11 +818,11 @@
         
         const detail = await loadMessageDetail(message.id);
         if (detail && detail.conversation) {
-          // Transform conversation - identify buyer vs seller based on ccwraps being the seller
+          // Transform conversation - API now returns 'seller' or 'buyer' directly
           const conversation = detail.conversation.map((msg) => ({
-            from: msg.from.toLowerCase() === 'ccwraps' ? 'seller' : 'buyer',
+            from: msg.from, // Already 'seller' or 'buyer'
             text: msg.text,
-            senderName: msg.from,
+            senderName: msg.senderName,
             time: message.timestamp,
           }));
           
