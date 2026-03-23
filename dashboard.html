@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | OnteraAI</title>
+  <meta name="description" content="Manage your e-commerce stores with AI-powered automation">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="apple-touch-icon" href="/logo-icon-180.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            zinc: {
+              850: '#1f1f23',
+              950: '#09090b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', system-ui, sans-serif; }
+    body { background: #0a0a0a; }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    
+    /* Toggle switch */
+    .toggle-switch { position: relative; width: 44px; height: 24px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background-color: #3f3f46; border-radius: 24px;
+      transition: 0.3s;
+    }
+    .toggle-slider:before {
+      position: absolute; content: ""; height: 18px; width: 18px;
+      left: 3px; bottom: 3px; background-color: white;
+      border-radius: 50%; transition: 0.3s;
+    }
+    input:checked + .toggle-slider { background-color: #10b981; }
+    input:checked + .toggle-slider:before { transform: translateX(20px); }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fadeIn 0.2s ease-out; }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin { animation: spin 1s linear infinite; }
+    
+    /* Hide scrollbar for message list on mobile */
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="min-h-screen text-white antialiased">
+  <div id="app"></div>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // Mock data - will be replaced with real eBay API calls
+    const MOCK_MESSAGES = [
+      {
+        id: '206052715347',
+        sender: 'el_chupakabra',
+        subject: 'Question about Credit Card Sticker',
+        itemId: '388256254728',
+        itemTitle: 'Custom Credit Card Skin - Holographic Dragon',
+        timestamp: '2026-03-22T14:32:00Z',
+        read: true,
+        replied: true,
+        conversation: [
+          { from: 'buyer', text: 'Hello can I order 4 of these? If you can please send me a revised invoice for 4 stickers please let me know thats would be $15?', time: '2026-03-18T10:15:00Z' },
+          { from: 'seller', text: "I can't do that, you'd have to do it on your end", time: '2026-03-18T11:30:00Z' },
+          { from: 'buyer', text: 'U did send me an offer before', time: '2026-03-18T12:45:00Z' },
+          { from: 'seller', text: "like i said i don't have the ability to do that.", time: '2026-03-18T14:00:00Z' },
+          { from: 'buyer', text: 'Received them I really appreciate it 🙏 thanks so much 🙏', time: '2026-03-21T09:20:00Z' },
+          { from: 'seller', text: 'no problem, enjoy!', time: '2026-03-21T10:05:00Z' },
+          { from: 'buyer', text: '👍', time: '2026-03-22T14:32:00Z' },
+        ],
+        needsResponse: false,
+      },
+      {
+        id: '206052889123',
+        sender: 'vinyl_collector_2024',
+        subject: 'Shipping question',
+        itemId: '388256254999',
+        itemTitle: 'Anime Credit Card Skin - Naruto Edition',
+        timestamp: '2026-03-23T09:15:00Z',
+        read: false,
+        replied: false,
+        conversation: [
+          { from: 'buyer', text: 'Hi! I ordered this 3 days ago but tracking still shows pre-shipment. When will it actually ship?', time: '2026-03-23T09:15:00Z' },
+        ],
+        needsResponse: true,
+        aiSuggestion: "Hi! Thanks for reaching out. I apologize for the delay - your order is being prepared and will ship out today. You should see tracking movement within 24-48 hours. I'll make sure it gets out right away. Thanks for your patience! 🙏",
+      },
+      {
+        id: '206052891456',
+        sender: 'techguy_mike',
+        subject: 'Custom design request',
+        itemId: '388256255100',
+        itemTitle: 'Custom Credit Card Skin - Your Design',
+        timestamp: '2026-03-23T11:42:00Z',
+        read: false,
+        replied: false,
+        conversation: [
+          { from: 'buyer', text: 'Can you make a custom design with my company logo? I need 50 pieces for our team. What would be the price?', time: '2026-03-23T11:42:00Z' },
+        ],
+        needsResponse: true,
+        aiSuggestion: "Hi! Absolutely, I'd love to help with a custom bulk order! For 50 pieces with your company logo, I can offer a special rate. Please send me your logo file (PNG or SVG works best) and I'll create a mockup for your approval. For bulk orders of 50+, pricing would be $3.50 per sticker ($175 total). Let me know if you'd like to proceed!",
+      },
+      {
+        id: '206052892000',
+        sender: 'sarah_designs',
+        subject: 'Wrong item received',
+        itemId: '388256255200',
+        itemTitle: 'Marble Effect Credit Card Skin - Rose Gold',
+        timestamp: '2026-03-23T08:20:00Z',
+        read: true,
+        replied: false,
+        conversation: [
+          { from: 'buyer', text: 'I ordered the rose gold marble but received a blue one instead. Can you send the correct one?', time: '2026-03-23T08:20:00Z' },
+        ],
+        needsResponse: true,
+        aiSuggestion: "Hi Sarah! I'm so sorry about the mix-up - that's completely my mistake. I'll ship out the correct rose gold marble design today at no extra charge. You can keep the blue one as a gift for the inconvenience. I'll send you the new tracking number once it ships. Again, my apologies for the error! 🙏",
+      },
+    ];
+
+    const STORES = [
+      { id: 'ccwraps', name: 'CCWraps', connected: true, messages: 47, orders: 12 },
+      { id: 'americanstickerdepot', name: 'AmericanStickerDepot', connected: false, messages: 0, orders: 0 },
+      { id: 'drippedoutcart', name: 'DrippedOutCart', connected: false, messages: 0, orders: 0 },
+    ];
+
+    // Icons as SVG strings
+    const Icon = ({ name, size = 20 }) => {
+      const icons = {
+        inbox: `<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>`,
+        store: `<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>`,
+        settings: `<circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>`,
+        sparkles: `<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/>`,
+        send: `<line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>`,
+        check: `<polyline points="20 6 9 17 4 12"></polyline>`,
+        link: `<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>`,
+        logout: `<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>`,
+        refresh: `<polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>`,
+        clock: `<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>`,
+        alert: `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>`,
+        back: `<polyline points="15 18 9 12 15 6"></polyline>`,
+        x: `<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>`,
+      };
+      
+      return (
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width={size} 
+          height={size} 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+          dangerouslySetInnerHTML={{ __html: icons[name] || '' }}
+        />
+      );
+    };
+
+    // eBay logo
+    const EbayLogo = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M5.71 8.64c-1.46 0-2.64.78-2.64 2.64 0 1.11.48 2.64 2.64 2.64 1.8 0 2.4-1.02 2.4-1.02H6.24s-.3.48-1.2.48c-.96 0-1.44-.72-1.44-1.44h4.32s.06-.3.06-.66c0-1.86-1.18-2.64-2.27-2.64zm-.06.96c.78 0 1.26.54 1.26 1.14H4.05c.12-.72.78-1.14 1.6-1.14zM16.08 8.64c-1.46 0-2.64.78-2.64 2.64 0 1.11.48 2.64 2.64 2.64 1.8 0 2.4-1.02 2.4-1.02h-1.86s-.3.48-1.2.48c-.96 0-1.44-.72-1.44-1.44h4.32s.06-.3.06-.66c0-1.86-1.18-2.64-2.28-2.64zm-.06.96c.78 0 1.26.54 1.26 1.14h-2.88c.12-.72.78-1.14 1.62-1.14zM8.82 6.48v7.38h1.14v-.42s.54.54 1.5.54c1.32 0 2.28-1.02 2.28-2.64 0-1.56-.96-2.64-2.28-2.64-.96 0-1.5.54-1.5.54V6.48H8.82zm2.34 3.12c.78 0 1.38.66 1.38 1.68s-.6 1.68-1.38 1.68c-.78 0-1.38-.66-1.38-1.68s.6-1.68 1.38-1.68zM19.2 8.76l-1.62 4.02-1.62-4.02h-1.2l2.34 5.34-.66 1.56h1.2l2.94-6.9h-1.38z"/>
+      </svg>
+    );
+
+    // Time formatter
+    const formatTime = (timestamp) => {
+      const date = new Date(timestamp);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+      
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      if (diffDays < 7) return `${diffDays}d ago`;
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    };
+
+    // Login Screen
+    const LoginScreen = ({ onLogin }) => {
+      const [email, setEmail] = useState('');
+      const [password, setPassword] = useState('');
+      const [isSignup, setIsSignup] = useState(false);
+      const [loading, setLoading] = useState(false);
+      
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setTimeout(() => {
+          onLogin({ email });
+        }, 800);
+      };
+      
+      return (
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-600/5 rounded-full blur-3xl"></div>
+          </div>
+          
+          <div className="w-full max-w-md relative animate-fade-in">
+            <div className="text-center mb-8">
+              <a href="/" className="inline-flex items-center gap-2 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-xl">O</span>
+                </div>
+                <span className="text-2xl font-semibold text-white tracking-tight">OnteraAI</span>
+              </a>
+              <p className="text-zinc-500">AI-powered e-commerce automation</p>
+            </div>
+            
+            <div className="bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 rounded-2xl p-8">
+              <h2 className="text-xl font-semibold text-white mb-6">
+                {isSignup ? 'Create your account' : 'Welcome back'}
+              </h2>
+              
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm text-zinc-400 mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                    placeholder="you@example.com"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm text-zinc-400 mb-2">Password</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+                
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-medium py-3 rounded-lg hover:from-emerald-400 hover:to-emerald-500 transition-all shadow-lg shadow-emerald-500/25 active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      {isSignup ? 'Creating account...' : 'Signing in...'}
+                    </>
+                  ) : (
+                    isSignup ? 'Create account' : 'Sign in'
+                  )}
+                </button>
+              </form>
+              
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => setIsSignup(!isSignup)}
+                  className="text-sm text-zinc-400 hover:text-emerald-400 transition-colors"
+                >
+                  {isSignup ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
+                </button>
+              </div>
+            </div>
+            
+            <p className="text-center text-zinc-600 text-xs mt-6">
+              By continuing, you agree to our <a href="/terms.html" className="hover:text-zinc-400">Terms</a> and <a href="/privacy.html" className="hover:text-zinc-400">Privacy Policy</a>
+            </p>
+          </div>
+        </div>
+      );
+    };
+
+    // Message Thread Component
+    const MessageThread = ({ message, onSendReply, onClose }) => {
+      const [replyText, setReplyText] = useState(message.aiSuggestion || '');
+      const [isSending, setIsSending] = useState(false);
+      const messagesEndRef = useRef(null);
+      
+      useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, [message]);
+      
+      const handleSend = async () => {
+        if (!replyText.trim()) return;
+        setIsSending(true);
+        await new Promise(r => setTimeout(r, 1500));
+        onSendReply(message.id, replyText);
+        setIsSending(false);
+      };
+      
+      return (
+        <div className="h-full flex flex-col">
+          {/* Mobile back button */}
+          <div className="p-3 border-b border-zinc-800 lg:hidden flex items-center gap-3">
+            <button 
+              onClick={onClose}
+              className="text-zinc-400 hover:text-white transition-colors p-1"
+            >
+              <Icon name="back" size={20} />
+            </button>
+            <span className="text-white font-medium">{message.sender}</span>
+          </div>
+          
+          {/* Header */}
+          <div className="p-4 border-b border-zinc-800 hidden lg:block">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-white font-medium">{message.sender}</h3>
+                <p className="text-sm text-zinc-500 mt-0.5">{message.subject}</p>
+              </div>
+              <a 
+                href={`https://www.ebay.com/itm/${message.itemId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-emerald-400 transition-colors bg-zinc-800/50 px-2 py-1 rounded"
+              >
+                <Icon name="link" size={14} />
+                View listing
+              </a>
+            </div>
+            <div className="mt-2 text-xs text-zinc-600 flex items-center gap-2">
+              <span className="bg-zinc-800 px-2 py-0.5 rounded truncate max-w-xs">{message.itemTitle}</span>
+            </div>
+          </div>
+          
+          {/* Conversation */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 hide-scrollbar">
+            {message.conversation.map((msg, idx) => (
+              <div key={idx} className={`flex ${msg.from === 'seller' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[85%] ${msg.from === 'seller' 
+                  ? 'bg-emerald-600/20 border border-emerald-500/30 text-emerald-100' 
+                  : 'bg-zinc-800 border border-zinc-700 text-zinc-200'
+                } rounded-2xl px-4 py-2.5`}>
+                  <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                  <p className={`text-xs mt-1 ${msg.from === 'seller' ? 'text-emerald-400/60' : 'text-zinc-500'}`}>
+                    {formatTime(msg.time)}
+                  </p>
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+          
+          {/* Reply Area */}
+          {message.needsResponse && (
+            <div className="p-4 border-t border-zinc-800 bg-zinc-900/50">
+              {message.aiSuggestion && (
+                <div className="mb-3 flex items-center gap-2 text-xs text-emerald-400">
+                  <Icon name="sparkles" size={14} />
+                  <span>AI-suggested response</span>
+                </div>
+              )}
+              
+              <textarea
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder="Type your reply..."
+                rows={4}
+                className="w-full bg-zinc-800/50 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all resize-none text-sm"
+              />
+              
+              <div className="flex items-center justify-between mt-3 gap-2">
+                <button
+                  onClick={() => setReplyText(message.aiSuggestion || '')}
+                  className="hidden sm:flex items-center gap-1.5 text-sm text-zinc-400 hover:text-emerald-400 transition-colors"
+                >
+                  <Icon name="sparkles" size={14} />
+                  Regenerate
+                </button>
+                
+                <div className="flex items-center gap-2 ml-auto">
+                  <button
+                    onClick={() => setReplyText('')}
+                    className="px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    onClick={handleSend}
+                    disabled={!replyText.trim() || isSending}
+                    className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-medium px-4 py-2 rounded-lg hover:from-emerald-400 hover:to-emerald-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSending ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        <span className="hidden sm:inline">Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Icon name="send" size={16} />
+                        <span className="hidden sm:inline">Send Reply</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Already replied message */}
+          {!message.needsResponse && (
+            <div className="p-4 border-t border-zinc-800 bg-zinc-900/50 text-center">
+              <p className="text-sm text-zinc-500 flex items-center justify-center gap-2">
+                <Icon name="check" size={16} />
+                Conversation complete
+              </p>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // Connect Store Modal
+    const ConnectStoreModal = ({ onClose, onConnect }) => {
+      const [connecting, setConnecting] = useState(false);
+      
+      const handleConnect = () => {
+        setConnecting(true);
+        // In production: window.location.href = '/api/auth/ebay'
+        setTimeout(() => {
+          onConnect();
+          onClose();
+        }, 2000);
+      };
+      
+      return (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md p-6 animate-fade-in" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold text-white">Connect your eBay store</h3>
+              <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors">
+                <Icon name="x" size={20} />
+              </button>
+            </div>
+            <p className="text-zinc-400 text-sm mb-6">
+              You'll be redirected to eBay to authorize OnteraAI to access your store.
+            </p>
+            
+            <div className="bg-zinc-800/50 rounded-xl p-4 mb-6">
+              <h4 className="text-sm font-medium text-white mb-3">OnteraAI will be able to:</h4>
+              <ul className="space-y-2 text-sm text-zinc-400">
+                <li className="flex items-center gap-2">
+                  <span className="text-emerald-400"><Icon name="check" size={16} /></span>
+                  <span>Read and respond to customer messages</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-emerald-400"><Icon name="check" size={16} /></span>
+                  <span>View orders and tracking information</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-emerald-400"><Icon name="check" size={16} /></span>
+                  <span>Create and manage listings</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-emerald-400"><Icon name="check" size={16} /></span>
+                  <span>Issue refunds when needed</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={onClose}
+                className="flex-1 px-4 py-3 text-zinc-400 hover:text-white border border-zinc-700 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConnect}
+                disabled={connecting}
+                className="flex-1 flex items-center justify-center gap-2 bg-[#0064d2] hover:bg-[#0050a8] text-white font-medium px-4 py-3 rounded-lg transition-colors disabled:opacity-70"
+              >
+                {connecting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Connecting...
+                  </>
+                ) : (
+                  <>
+                    <EbayLogo />
+                    Connect with eBay
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Main Dashboard
+    const Dashboard = ({ user, onLogout }) => {
+      const [activeTab, setActiveTab] = useState('inbox');
+      const [messages, setMessages] = useState(MOCK_MESSAGES);
+      const [stores, setStores] = useState(STORES);
+      const [selectedMessage, setSelectedMessage] = useState(null);
+      const [showConnectModal, setShowConnectModal] = useState(false);
+      const [filter, setFilter] = useState('all');
+      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+      
+      const needsResponseCount = messages.filter(m => m.needsResponse).length;
+      
+      const filteredMessages = messages.filter(m => {
+        if (filter === 'needsResponse') return m.needsResponse;
+        if (filter === 'replied') return m.replied;
+        return true;
+      });
+      
+      const handleSendReply = (messageId, replyText) => {
+        setMessages(prev => prev.map(m => {
+          if (m.id === messageId) {
+            return {
+              ...m,
+              needsResponse: false,
+              replied: true,
+              conversation: [...m.conversation, {
+                from: 'seller',
+                text: replyText,
+                time: new Date().toISOString(),
+              }],
+            };
+          }
+          return m;
+        }));
+        setSelectedMessage(null);
+      };
+      
+      const handleConnectStore = () => {
+        setStores(prev => prev.map((s, idx) => 
+          idx === 1 ? { ...s, connected: true, messages: 23, orders: 8 } : s
+        ));
+      };
+      
+      return (
+        <div className="min-h-screen flex">
+          {/* Sidebar - Desktop */}
+          <div className="hidden md:flex w-64 bg-zinc-900/50 border-r border-zinc-800 flex-col">
+            <div className="p-4 border-b border-zinc-800">
+              <a href="/" className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold">O</span>
+                </div>
+                <span className="text-lg font-semibold text-white tracking-tight">OnteraAI</span>
+              </a>
+            </div>
+            
+            <nav className="flex-1 p-3 space-y-1">
+              <button
+                onClick={() => setActiveTab('inbox')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                  activeTab === 'inbox' 
+                    ? 'bg-emerald-500/10 text-emerald-400' 
+                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                }`}
+              >
+                <Icon name="inbox" />
+                <span>Inbox</span>
+                {needsResponseCount > 0 && (
+                  <span className="ml-auto bg-emerald-500 text-white text-xs font-medium px-2 py-0.5 rounded-full">
+                    {needsResponseCount}
+                  </span>
+                )}
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('stores')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                  activeTab === 'stores' 
+                    ? 'bg-emerald-500/10 text-emerald-400' 
+                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                }`}
+              >
+                <Icon name="store" />
+                <span>Stores</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('settings')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                  activeTab === 'settings' 
+                    ? 'bg-emerald-500/10 text-emerald-400' 
+                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                }`}
+              >
+                <Icon name="settings" />
+                <span>Settings</span>
+              </button>
+            </nav>
+            
+            {/* User */}
+            <div className="p-3 border-t border-zinc-800">
+              <div className="flex items-center gap-3 px-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-zinc-600 to-zinc-700 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                  {user.email[0].toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-white truncate">{user.email}</p>
+                  <p className="text-xs text-zinc-500">Pro Plan</p>
+                </div>
+                <button 
+                  onClick={onLogout}
+                  className="text-zinc-500 hover:text-white transition-colors"
+                  title="Sign out"
+                >
+                  <Icon name="logout" size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {/* Mobile Header */}
+          <div className="md:hidden fixed top-0 left-0 right-0 bg-zinc-900/95 backdrop-blur-lg border-b border-zinc-800 z-40">
+            <div className="flex items-center justify-between p-3">
+              <a href="/" className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold">O</span>
+                </div>
+                <span className="text-lg font-semibold text-white">OnteraAI</span>
+              </a>
+              
+              <div className="flex items-center gap-2">
+                {needsResponseCount > 0 && (
+                  <span className="bg-emerald-500 text-white text-xs font-medium px-2 py-1 rounded-full">
+                    {needsResponseCount}
+                  </span>
+                )}
+                <button 
+                  onClick={onLogout}
+                  className="text-zinc-400 hover:text-white p-2"
+                >
+                  <Icon name="logout" size={20} />
+                </button>
+              </div>
+            </div>
+            
+            {/* Mobile Tabs */}
+            <div className="flex border-t border-zinc-800">
+              {[
+                { id: 'inbox', icon: 'inbox', label: 'Inbox' },
+                { id: 'stores', icon: 'store', label: 'Stores' },
+                { id: 'settings', icon: 'settings', label: 'Settings' },
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => { setActiveTab(tab.id); setSelectedMessage(null); }}
+                  className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors ${
+                    activeTab === tab.id ? 'text-emerald-400' : 'text-zinc-500'
+                  }`}
+                >
+                  <Icon name={tab.icon} size={18} />
+                  <span className="text-xs">{tab.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Main Content */}
+          <div className="flex-1 flex flex-col md:flex-row pt-[105px] md:pt-0">
+            {/* Content Area */}
+            <div className={`flex-1 flex flex-col ${selectedMessage ? 'hidden lg:flex' : ''}`}>
+              {activeTab === 'inbox' && (
+                <>
+                  {/* Inbox Header */}
+                  <div className="p-4 border-b border-zinc-800">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h1 className="text-xl font-semibold text-white">Inbox</h1>
+                        <p className="text-sm text-zinc-500 mt-0.5">
+                          {needsResponseCount} messages need your attention
+                        </p>
+                      </div>
+                      <button className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors bg-zinc-800/50 px-3 py-1.5 rounded-lg">
+                        <Icon name="refresh" size={16} />
+                        <span className="hidden sm:inline">Refresh</span>
+                      </button>
+                    </div>
+                    
+                    {/* Filters */}
+                    <div className="flex gap-2 overflow-x-auto hide-scrollbar">
+                      {[
+                        { id: 'all', label: 'All' },
+                        { id: 'needsResponse', label: 'Needs response' },
+                        { id: 'replied', label: 'Replied' },
+                      ].map(f => (
+                        <button
+                          key={f.id}
+                          onClick={() => setFilter(f.id)}
+                          className={`px-3 py-1.5 rounded-lg text-sm transition-colors whitespace-nowrap ${
+                            filter === f.id
+                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                              : 'text-zinc-400 hover:text-white bg-zinc-800/30 border border-transparent'
+                          }`}
+                        >
+                          {f.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Message List */}
+                  <div className="flex-1 overflow-y-auto">
+                    {filteredMessages.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center h-64 text-zinc-500">
+                        <Icon name="inbox" size={48} />
+                        <p className="mt-4">No messages found</p>
+                      </div>
+                    ) : (
+                      filteredMessages.map((message) => (
+                        <button
+                          key={message.id}
+                          onClick={() => setSelectedMessage(message)}
+                          className={`w-full text-left p-4 border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors ${
+                            !message.read ? 'bg-zinc-800/20' : ''
+                          } ${selectedMessage?.id === message.id ? 'bg-zinc-800/50' : ''}`}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0 ${
+                              message.needsResponse 
+                                ? 'bg-amber-500/20 text-amber-400' 
+                                : 'bg-zinc-800 text-zinc-400'
+                            }`}>
+                              {message.sender[0].toUpperCase()}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className={`font-medium ${!message.read ? 'text-white' : 'text-zinc-300'}`}>
+                                  {message.sender}
+                                </span>
+                                {message.needsResponse && (
+                                  <span className="flex items-center gap-1 text-xs text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
+                                    <Icon name="alert" size={12} />
+                                    Needs reply
+                                  </span>
+                                )}
+                                {message.aiSuggestion && (
+                                  <span className="flex items-center gap-1 text-xs text-emerald-400">
+                                    <Icon name="sparkles" size={12} />
+                                    AI ready
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-sm text-zinc-400 truncate mt-0.5">{message.subject}</p>
+                              <p className="text-sm text-zinc-500 truncate mt-1">
+                                {message.conversation[message.conversation.length - 1]?.text}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-zinc-500 flex-shrink-0">
+                              <Icon name="clock" size={12} />
+                              {formatTime(message.timestamp)}
+                            </div>
+                          </div>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </>
+              )}
+              
+              {activeTab === 'stores' && (
+                <div className="p-4 md:p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h1 className="text-xl font-semibold text-white">Connected Stores</h1>
+                      <p className="text-sm text-zinc-500 mt-0.5">Manage your e-commerce platforms</p>
+                    </div>
+                    <button
+                      onClick={() => setShowConnectModal(true)}
+                      className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-medium px-4 py-2 rounded-lg hover:from-emerald-400 hover:to-emerald-500 transition-all text-sm"
+                    >
+                      <span>+</span>
+                      <span className="hidden sm:inline">Connect Store</span>
+                    </button>
+                  </div>
+                  
+                  <div className="grid gap-4">
+                    {stores.map((store) => (
+                      <div
+                        key={store.id}
+                        className={`bg-zinc-900/50 border rounded-xl p-4 md:p-5 ${
+                          store.connected ? 'border-emerald-500/30' : 'border-zinc-800'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-3 md:gap-4">
+                            <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                              store.connected 
+                                ? 'bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 text-emerald-400' 
+                                : 'bg-zinc-800 text-zinc-500'
+                            }`}>
+                              <EbayLogo />
+                            </div>
+                            <div>
+                              <h3 className="text-white font-medium">{store.name}</h3>
+                              <p className={`text-sm ${store.connected ? 'text-emerald-400' : 'text-zinc-500'}`}>
+                                {store.connected ? 'Connected' : 'Not connected'}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          {store.connected ? (
+                            <div className="flex items-center gap-4 md:gap-6 text-sm">
+                              <div className="text-center hidden sm:block">
+                                <p className="text-white font-medium">{store.messages}</p>
+                                <p className="text-zinc-500 text-xs">Messages</p>
+                              </div>
+                              <div className="text-center hidden sm:block">
+                                <p className="text-white font-medium">{store.orders}</p>
+                                <p className="text-zinc-500 text-xs">Orders</p>
+                              </div>
+                              <button className="text-zinc-400 hover:text-white transition-colors">
+                                <Icon name="settings" size={18} />
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setShowConnectModal(true)}
+                              className="text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors"
+                            >
+                              Connect →
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Coming Soon */}
+                  <div className="mt-8">
+                    <h2 className="text-sm font-medium text-zinc-500 uppercase tracking-wider mb-4">Coming Soon</h2>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {['Amazon', 'Shopify', 'TikTok Shop', 'Etsy'].map((platform) => (
+                        <div key={platform} className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-4 text-center opacity-60">
+                          <p className="text-zinc-400 text-sm">{platform}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {activeTab === 'settings' && (
+                <div className="p-4 md:p-6">
+                  <h1 className="text-xl font-semibold text-white mb-6">Settings</h1>
+                  
+                  <div className="space-y-6 max-w-2xl">
+                    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 md:p-5">
+                      <h3 className="text-white font-medium mb-4">AI Response Settings</h3>
+                      <div className="space-y-4">
+                        <label className="flex items-center justify-between gap-4">
+                          <div>
+                            <p className="text-zinc-300">Auto-respond to messages</p>
+                            <p className="text-sm text-zinc-500">AI will automatically reply to customer messages</p>
+                          </div>
+                          <label className="toggle-switch flex-shrink-0">
+                            <input type="checkbox" />
+                            <span className="toggle-slider"></span>
+                          </label>
+                        </label>
+                        
+                        <label className="flex items-center justify-between gap-4">
+                          <div>
+                            <p className="text-zinc-300">Require approval</p>
+                            <p className="text-sm text-zinc-500">Review AI responses before sending</p>
+                          </div>
+                          <label className="toggle-switch flex-shrink-0">
+                            <input type="checkbox" defaultChecked />
+                            <span className="toggle-slider"></span>
+                          </label>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 md:p-5">
+                      <h3 className="text-white font-medium mb-4">Notifications</h3>
+                      <div className="space-y-4">
+                        <label className="flex items-center justify-between gap-4">
+                          <div>
+                            <p className="text-zinc-300">Email notifications</p>
+                            <p className="text-sm text-zinc-500">Get notified of new messages</p>
+                          </div>
+                          <label className="toggle-switch flex-shrink-0">
+                            <input type="checkbox" defaultChecked />
+                            <span className="toggle-slider"></span>
+                          </label>
+                        </label>
+                        
+                        <label className="flex items-center justify-between gap-4">
+                          <div>
+                            <p className="text-zinc-300">Daily digest</p>
+                            <p className="text-sm text-zinc-500">Summary of store activity</p>
+                          </div>
+                          <label className="toggle-switch flex-shrink-0">
+                            <input type="checkbox" defaultChecked />
+                            <span className="toggle-slider"></span>
+                          </label>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 md:p-5">
+                      <h3 className="text-white font-medium mb-4">Account</h3>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-zinc-400">Email</span>
+                          <span className="text-white">{user.email}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-zinc-400">Plan</span>
+                          <span className="text-emerald-400">Pro - $149/mo</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Message Detail Panel */}
+            {selectedMessage && (
+              <div className="fixed inset-0 md:relative md:inset-auto w-full lg:w-[480px] md:border-l border-zinc-800 bg-[#0a0a0a] md:bg-zinc-900/30 flex flex-col z-50 md:z-auto pt-[105px] md:pt-0">
+                <MessageThread
+                  message={selectedMessage}
+                  onSendReply={handleSendReply}
+                  onClose={() => setSelectedMessage(null)}
+                />
+              </div>
+            )}
+          </div>
+          
+          {/* Connect Store Modal */}
+          {showConnectModal && (
+            <ConnectStoreModal
+              onClose={() => setShowConnectModal(false)}
+              onConnect={handleConnectStore}
+            />
+          )}
+        </div>
+      );
+    };
+
+    // Main App
+    function App() {
+      const [user, setUser] = useState(null);
+      
+      // Check for saved session
+      useEffect(() => {
+        const savedUser = localStorage.getItem('ontera_user');
+        if (savedUser) {
+          setUser(JSON.parse(savedUser));
+        }
+      }, []);
+      
+      const handleLogin = (userData) => {
+        setUser(userData);
+        localStorage.setItem('ontera_user', JSON.stringify(userData));
+      };
+      
+      const handleLogout = () => {
+        setUser(null);
+        localStorage.removeItem('ontera_user');
+      };
+      
+      if (!user) {
+        return <LoginScreen onLogin={handleLogin} />;
+      }
+      
+      return <Dashboard user={user} onLogout={handleLogout} />;
+    }
+
+    ReactDOM.createRoot(document.getElementById('app')).render(<App />);
+  </script>
+</body>
+</html>
