@@ -817,10 +817,12 @@
         setSelectedMessage({ ...message, loadingDetail: true });
         
         const detail = await loadMessageDetail(message.id);
-        if (detail) {
-          const conversation = detail.conversation.map((text, idx) => ({
-            from: idx % 2 === 0 ? 'buyer' : 'seller', // Alternate (rough heuristic)
-            text: text,
+        if (detail && detail.conversation) {
+          // Transform conversation - identify buyer vs seller based on ccwraps being the seller
+          const conversation = detail.conversation.map((msg) => ({
+            from: msg.from.toLowerCase() === 'ccwraps' ? 'seller' : 'buyer',
+            text: msg.text,
+            senderName: msg.from,
             time: message.timestamp,
           }));
           
@@ -831,7 +833,7 @@
             loadingDetail: false,
           });
         } else {
-          setSelectedMessage({ ...message, loadingDetail: false });
+          setSelectedMessage({ ...message, loadingDetail: false, conversation: [] });
         }
       };
       
