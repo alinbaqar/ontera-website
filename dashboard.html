@@ -76,9 +76,15 @@
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
+    
+    // Supabase client
+    const SUPABASE_URL = 'https://tgyqxgppwqijvuxgybvm.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRneXF4Z3Bwd3FpanZ1eGd5YnZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTk0MDMsImV4cCI6MjA4OTg3NTQwM30.pviDBpDycFlQdw2qHF3W9h2dfvBhzPvTUxfbgAfkV94';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // Mock data - will be replaced with real eBay API calls
     const MOCK_MESSAGES = [
@@ -217,13 +223,50 @@
       const [password, setPassword] = useState('');
       const [isSignup, setIsSignup] = useState(false);
       const [loading, setLoading] = useState(false);
+      const [error, setError] = useState('');
+      const [message, setMessage] = useState('');
       
-      const handleSubmit = (e) => {
+      const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setTimeout(() => {
-          onLogin({ email });
-        }, 800);
+        setError('');
+        setMessage('');
+        
+        try {
+          if (isSignup) {
+            // Sign up
+            const { data, error } = await supabase.auth.signUp({
+              email,
+              password,
+            });
+            
+            if (error) throw error;
+            
+            if (data.user && !data.session) {
+              // Email confirmation required
+              setMessage('Check your email for a confirmation link!');
+              setLoading(false);
+              return;
+            }
+            
+            if (data.session) {
+              onLogin(data.user);
+            }
+          } else {
+            // Sign in
+            const { data, error } = await supabase.auth.signInWithPassword({
+              email,
+              password,
+            });
+            
+            if (error) throw error;
+            onLogin(data.user);
+          }
+        } catch (err) {
+          setError(err.message || 'An error occurred');
+        }
+        
+        setLoading(false);
       };
       
       return (
@@ -249,6 +292,18 @@
                 {isSignup ? 'Create your account' : 'Welcome back'}
               </h2>
               
+              {error && (
+                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                  {error}
+                </div>
+              )}
+              
+              {message && (
+                <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-400 text-sm">
+                  {message}
+                </div>
+              )}
+              
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm text-zinc-400 mb-2">Email</label>
@@ -271,6 +326,7 @@
                     className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
                     placeholder="••••••••"
                     required
+                    minLength={6}
                   />
                 </div>
                 
@@ -292,7 +348,7 @@
               
               <div className="mt-6 text-center">
                 <button
-                  onClick={() => setIsSignup(!isSignup)}
+                  onClick={() => { setIsSignup(!isSignup); setError(''); setMessage(''); }}
                   className="text-sm text-zinc-400 hover:text-emerald-400 transition-colors"
                 >
                   {isSignup ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
@@ -979,24 +1035,44 @@
     // Main App
     function App() {
       const [user, setUser] = useState(null);
+      const [loading, setLoading] = useState(true);
       
-      // Check for saved session
+      // Check for existing Supabase session
       useEffect(() => {
-        const savedUser = localStorage.getItem('ontera_user');
-        if (savedUser) {
-          setUser(JSON.parse(savedUser));
-        }
+        // Get initial session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          setUser(session?.user ?? null);
+          setLoading(false);
+        });
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+          setUser(session?.user ?? null);
+        });
+
+        return () => subscription.unsubscribe();
       }, []);
       
       const handleLogin = (userData) => {
         setUser(userData);
-        localStorage.setItem('ontera_user', JSON.stringify(userData));
       };
       
-      const handleLogout = () => {
+      const handleLogout = async () => {
+        await supabase.auth.signOut();
         setUser(null);
-        localStorage.removeItem('ontera_user');
       };
+      
+      // Show loading state while checking session
+      if (loading) {
+        return (
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
+              <p className="text-zinc-500 text-sm">Loading...</p>
+            </div>
+          </div>
+        );
+      }
       
       if (!user) {
         return <LoginScreen onLogin={handleLogin} />;
