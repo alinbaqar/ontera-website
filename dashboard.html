@@ -621,21 +621,34 @@
       );
     };
 
+    // API Base URL
+    const API_URL = 'https://ontera-api.onteraai.workers.dev';
+
     // Main Dashboard
     const Dashboard = ({ user, onLogout }) => {
       const [activeTab, setActiveTab] = useState('inbox');
-      const [messages, setMessages] = useState(MOCK_MESSAGES);
+      const [messages, setMessages] = useState([]);
+      const [loadingMessages, setLoadingMessages] = useState(false);
       const [stores, setStores] = useState([]);
       const [loadingStores, setLoadingStores] = useState(true);
       const [selectedMessage, setSelectedMessage] = useState(null);
       const [showConnectModal, setShowConnectModal] = useState(false);
       const [filter, setFilter] = useState('all');
       const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+      const [accessToken, setAccessToken] = useState(null);
       
       // Load stores from Supabase on mount
       useEffect(() => {
         loadStores();
       }, []);
+      
+      // Load messages when stores are loaded
+      useEffect(() => {
+        const connectedStore = stores.find(s => s.connected && s.refreshToken);
+        if (connectedStore) {
+          loadMessages(connectedStore.refreshToken);
+        }
+      }, [stores]);
       
       const loadStores = async () => {
         setLoadingStores(true);
@@ -707,6 +720,101 @@
           setStores(storeList);
         }
         setLoadingStores(false);
+      };
+      
+      const loadMessages = async (refreshToken) => {
+        setLoadingMessages(true);
+        try {
+          // Step 1: Get fresh access token
+          const tokenRes = await fetch(`${API_URL}/api/ebay/refresh-token`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh_token: refreshToken }),
+          });
+          const tokenData = await tokenRes.json();
+          
+          if (tokenData.error) {
+            console.error('Token error:', tokenData);
+            setLoadingMessages(false);
+            return;
+          }
+          
+          setAccessToken(tokenData.access_token);
+          
+          // Step 2: Fetch messages
+          const messagesRes = await fetch(`${API_URL}/api/ebay/messages`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ access_token: tokenData.access_token }),
+          });
+          const messagesData = await messagesRes.json();
+          
+          if (messagesData.messages) {
+            // Transform to UI format
+            const formattedMessages = messagesData.messages.map(m => ({
+              id: m.id,
+              sender: m.sender,
+              subject: m.subject || 'No subject',
+              itemId: m.itemId,
+              itemTitle: m.itemTitle || 'eBay Item',
+              timestamp: m.receiveDate,
+              read: m.read,
+              replied: m.replied,
+              needsResponse: m.responseEnabled && !m.replied,
+              conversation: [],
+              messageType: m.messageType,
+            }));
+            
+            setMessages(formattedMessages);
+            
+            // Update store message count
+            setStores(prev => prev.map(s => 
+              s.connected ? { ...s, messages: formattedMessages.length } : s
+            ));
+          }
+        } catch (err) {
+          console.error('Error loading messages:', err);
+        }
+        setLoadingMessages(false);
+      };
+      
+      const loadMessageDetail = async (messageId) => {
+        if (!accessToken) return null;
+        
+        try {
+          const res = await fetch(`${API_URL}/api/ebay/message`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ access_token: accessToken, message_id: messageId }),
+          });
+          const detail = await res.json();
+          return detail;
+        } catch (err) {
+          console.error('Error loading message detail:', err);
+          return null;
+        }
+      };
+      
+      const handleSelectMessage = async (message) => {
+        setSelectedMessage({ ...message, loadingDetail: true });
+        
+        const detail = await loadMessageDetail(message.id);
+        if (detail) {
+          const conversation = detail.conversation.map((text, idx) => ({
+            from: idx % 2 === 0 ? 'buyer' : 'seller', // Alternate (rough heuristic)
+            text: text,
+            time: message.timestamp,
+          }));
+          
+          setSelectedMessage({
+            ...message,
+            itemTitle: detail.itemTitle || message.itemTitle,
+            conversation: conversation,
+            loadingDetail: false,
+          });
+        } else {
+          setSelectedMessage({ ...message, loadingDetail: false });
+        }
       };
       
       const needsResponseCount = messages.filter(m => m.needsResponse).length;
@@ -896,12 +1004,19 @@
                       <div>
                         <h1 className="text-xl font-semibold text-white">Inbox</h1>
                         <p className="text-sm text-zinc-500 mt-0.5">
-                          {needsResponseCount} messages need your attention
+                          {loadingMessages ? 'Loading messages...' : `${needsResponseCount} messages need your attention`}
                         </p>
                       </div>
-                      <button className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors bg-zinc-800/50 px-3 py-1.5 rounded-lg">
+                      <button 
+                        onClick={() => {
+                          const connectedStore = stores.find(s => s.connected && s.refreshToken);
+                          if (connectedStore) loadMessages(connectedStore.refreshToken);
+                        }}
+                        disabled={loadingMessages}
+                        className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors bg-zinc-800/50 px-3 py-1.5 rounded-lg disabled:opacity-50"
+                      >
                         <Icon name="refresh" size={16} />
-                        <span className="hidden sm:inline">Refresh</span>
+                        <span className="hidden sm:inline">{loadingMessages ? 'Loading...' : 'Refresh'}</span>
                       </button>
                     </div>
                     
@@ -929,16 +1044,21 @@
                   
                   {/* Message List */}
                   <div className="flex-1 overflow-y-auto">
-                    {filteredMessages.length === 0 ? (
+                    {loadingMessages ? (
+                      <div className="flex flex-col items-center justify-center h-64 text-zinc-500">
+                        <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
+                        <p className="mt-4">Loading messages from eBay...</p>
+                      </div>
+                    ) : filteredMessages.length === 0 ? (
                       <div className="flex flex-col items-center justify-center h-64 text-zinc-500">
                         <Icon name="inbox" size={48} />
-                        <p className="mt-4">No messages found</p>
+                        <p className="mt-4">{stores.some(s => s.connected) ? 'No messages found' : 'Connect a store to see messages'}</p>
                       </div>
                     ) : (
                       filteredMessages.map((message) => (
                         <button
                           key={message.id}
-                          onClick={() => setSelectedMessage(message)}
+                          onClick={() => handleSelectMessage(message)}
                           className={`w-full text-left p-4 border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors ${
                             !message.read ? 'bg-zinc-800/20' : ''
                           } ${selectedMessage?.id === message.id ? 'bg-zinc-800/50' : ''}`}
