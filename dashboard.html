@@ -642,13 +642,16 @@
         loadStores();
       }, []);
       
-      // Load messages when stores are loaded
+      // Load messages when stores are loaded (only once)
+      const [messagesLoaded, setMessagesLoaded] = useState(false);
       useEffect(() => {
+        if (messagesLoaded) return;
         const connectedStore = stores.find(s => s.connected && s.refreshToken);
         if (connectedStore) {
+          setMessagesLoaded(true);
           loadMessages(connectedStore.refreshToken);
         }
-      }, [stores]);
+      }, [stores, messagesLoaded]);
       
       const loadStores = async () => {
         setLoadingStores(true);
