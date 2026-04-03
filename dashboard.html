@@ -13,14 +13,7 @@
   <script>
     tailwind.config = {
       theme: {
-        extend: {
-          colors: {
-            zinc: {
-              850: '#1f1f23',
-              950: '#09090b',
-            }
-          }
-        }
+        extend: {}
       }
     }
   </script>
@@ -29,20 +22,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { font-family: 'Inter', system-ui, sans-serif; }
-    body { background: #0a0a0a; }
-    
+    body { background: #ffffff; }
+
     /* Custom scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #52525b; }
-    
+    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
     /* Toggle switch */
     .toggle-switch { position: relative; width: 44px; height: 24px; }
     .toggle-switch input { opacity: 0; width: 0; height: 0; }
     .toggle-slider {
       position: absolute; cursor: pointer; inset: 0;
-      background-color: #3f3f46; border-radius: 24px;
+      background-color: #d1d5db; border-radius: 24px;
       transition: 0.3s;
     }
     .toggle-slider:before {
@@ -50,7 +43,7 @@
       left: 3px; bottom: 3px; background-color: white;
       border-radius: 50%; transition: 0.3s;
     }
-    input:checked + .toggle-slider { background-color: #10b981; }
+    input:checked + .toggle-slider { background-color: #0064d2; }
     input:checked + .toggle-slider:before { transform: translateX(20px); }
     
     /* Animations */
@@ -70,7 +63,7 @@
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="min-h-screen text-white antialiased">
+<body class="min-h-screen text-gray-900 antialiased">
   <div id="app"></div>
 
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -272,58 +265,58 @@
       return (
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-600/5 rounded-full blur-3xl"></div>
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-50 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-50/50 rounded-full blur-3xl"></div>
           </div>
           
           <div className="w-full max-w-md relative animate-fade-in">
             <div className="text-center mb-8">
               <a href="/" className="inline-flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-xl">O</span>
                 </div>
-                <span className="text-2xl font-semibold text-white tracking-tight">OnteraAI</span>
+                <span className="text-2xl font-semibold text-gray-900 tracking-tight">OnteraAI</span>
               </a>
-              <p className="text-zinc-500">AI-powered e-commerce automation</p>
+              <p className="text-gray-500">AI-powered e-commerce automation</p>
             </div>
             
-            <div className="bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 rounded-2xl p-8">
-              <h2 className="text-xl font-semibold text-white mb-6">
+            <div className="bg-white backdrop-blur-xl border border-gray-200 rounded-2xl p-8">
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">
                 {isSignup ? 'Create your account' : 'Welcome back'}
               </h2>
               
               {error && (
-                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
                   {error}
                 </div>
               )}
               
               {message && (
-                <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-400 text-sm">
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-600 text-sm">
                   {message}
                 </div>
               )}
               
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm text-zinc-400 mb-2">Email</label>
+                  <label className="block text-sm text-gray-600 mb-2">Email</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                     placeholder="you@example.com"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm text-zinc-400 mb-2">Password</label>
+                  <label className="block text-sm text-gray-600 mb-2">Password</label>
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                     placeholder="••••••••"
                     required
                     minLength={6}
@@ -333,7 +326,7 @@
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-medium py-3 rounded-lg hover:from-emerald-400 hover:to-emerald-500 transition-all shadow-lg shadow-emerald-500/25 active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium py-3 rounded-lg hover:from-blue-500 hover:to-blue-600 transition-all shadow-lg shadow-blue-500/25 active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>
@@ -349,15 +342,15 @@
               <div className="mt-6 text-center">
                 <button
                   onClick={() => { setIsSignup(!isSignup); setError(''); setMessage(''); }}
-                  className="text-sm text-zinc-400 hover:text-emerald-400 transition-colors"
+                  className="text-sm text-gray-500 hover:text-blue-600 transition-colors"
                 >
                   {isSignup ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
                 </button>
               </div>
             </div>
             
-            <p className="text-center text-zinc-600 text-xs mt-6">
-              By continuing, you agree to our <a href="/terms.html" className="hover:text-zinc-400">Terms</a> and <a href="/privacy.html" className="hover:text-zinc-400">Privacy Policy</a>
+            <p className="text-center text-gray-400 text-xs mt-6">
+              By continuing, you agree to our <a href="/terms.html" className="hover:text-gray-600">Terms</a> and <a href="/privacy.html" className="hover:text-gray-600">Privacy Policy</a>
             </p>
           </div>
         </div>
@@ -416,66 +409,71 @@
       return (
         <div className="h-full flex flex-col">
           {/* Mobile back button */}
-          <div className="p-3 border-b border-zinc-800 lg:hidden flex items-center gap-3">
+          <div className="p-3 border-b border-gray-200 lg:hidden flex items-center gap-3">
             <button 
               onClick={onClose}
-              className="text-zinc-400 hover:text-white transition-colors p-1"
+              className="text-gray-400 hover:text-gray-900 transition-colors p-1"
             >
               <Icon name="back" size={20} />
             </button>
-            <span className="text-white font-medium">{message.sender}</span>
+            <span className="text-gray-900 font-medium">{message.sender}</span>
           </div>
           
           {/* Header */}
-          <div className="p-4 border-b border-zinc-800 hidden lg:block">
+          <div className="p-4 border-b border-gray-200 hidden lg:block">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-white font-medium">{message.sender}</h3>
-                <p className="text-sm text-zinc-500 mt-0.5">{message.subject}</p>
+                <h3 className="text-gray-900 font-medium">{message.sender}</h3>
+                <p className="text-sm text-gray-500 mt-0.5">{message.subject}</p>
               </div>
               {message.itemId && (
                 <a 
                   href={`https://www.ebay.com/itm/${message.itemId}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-emerald-400 transition-colors bg-zinc-800/50 px-2 py-1 rounded"
+                  className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-blue-600 transition-colors bg-gray-100 px-2 py-1 rounded"
                 >
                   <Icon name="link" size={14} />
                   View listing
                 </a>
               )}
             </div>
-            <div className="mt-2 text-xs text-zinc-600 flex items-center gap-2">
-              <span className="bg-zinc-800 px-2 py-0.5 rounded truncate max-w-xs">{message.itemTitle}</span>
+            <div className="mt-2 text-xs text-gray-400 flex items-center gap-2">
+              <span className="bg-gray-100 px-2 py-0.5 rounded truncate max-w-xs">{message.itemTitle}</span>
             </div>
           </div>
           
           {/* Conversation */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 hide-scrollbar">
             {message.loadingDetail ? (
-              <div className="flex flex-col items-center justify-center h-32 text-zinc-500">
-                <div className="w-6 h-6 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
+              <div className="flex flex-col items-center justify-center h-32 text-gray-500">
+                <div className="w-6 h-6 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
                 <p className="mt-3 text-sm">Loading conversation...</p>
               </div>
             ) : message.conversation && message.conversation.length > 0 ? (
               message.conversation.map((msg, idx) => (
                 <div key={idx} className={`flex ${msg.from === 'seller' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] ${msg.from === 'seller' 
-                    ? 'bg-emerald-600/20 border border-emerald-500/30 text-emerald-100' 
-                    : 'bg-zinc-800 border border-zinc-700 text-zinc-200'
+                  <div className={`max-w-[85%] ${msg.from === 'seller'
+                    ? 'bg-blue-50 border border-blue-200 text-gray-800'
+                    : 'bg-gray-100 border border-gray-200 text-gray-800'
                   } rounded-2xl px-4 py-2.5`}>
+                    {msg.senderName && (
+                      <p className={`text-xs font-medium mb-1 ${msg.from === 'seller' ? 'text-blue-600' : 'text-gray-500'}`}>
+                        {msg.senderName}
+                      </p>
+                    )}
                     <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
-                    <p className={`text-xs mt-1 ${msg.from === 'seller' ? 'text-emerald-400/60' : 'text-zinc-500'}`}>
-                      {formatTime(msg.time)}
+                    <p className={`text-xs mt-1 ${msg.from === 'seller' ? 'text-blue-400' : 'text-gray-500'}`}>
+                      {msg.time ? new Date(msg.time).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }) : ''}
                     </p>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="bg-zinc-800 border border-zinc-700 rounded-2xl px-4 py-3 text-zinc-300">
+              <div className="bg-gray-100 border border-gray-200 rounded-2xl px-4 py-3 text-gray-700">
                 <p className="text-sm">Message from {message.sender}</p>
-                <p className="text-xs text-zinc-500 mt-2">{formatTime(message.timestamp)}</p>
-                <p className="text-xs text-zinc-600 mt-2 italic">Click "View listing" to see full context on eBay</p>
+                <p className="text-xs text-gray-500 mt-2">{formatTime(message.timestamp)}</p>
+                <p className="text-xs text-gray-400 mt-2 italic">Click "View listing" to see full context on eBay</p>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -483,20 +481,20 @@
           
           {/* Reply Area */}
           {message.needsResponse && (
-            <div className="p-4 border-t border-zinc-800 bg-zinc-900/50">
+            <div className="p-4 border-t border-gray-200 bg-gray-50">
               {sendError && (
-                <div className="mb-3 p-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
                   {sendError}
                 </div>
               )}
               {sendSuccess && (
-                <div className="mb-3 p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-400 text-sm flex items-center gap-2">
+                <div className="mb-3 p-2 bg-green-50 border border-green-200 rounded-lg text-green-600 text-sm flex items-center gap-2">
                   <Icon name="check" size={14} />
                   Reply sent successfully
                 </div>
               )}
               {message.aiSuggestion && (
-                <div className="mb-3 flex items-center gap-2 text-xs text-emerald-400">
+                <div className="mb-3 flex items-center gap-2 text-xs text-blue-600">
                   <Icon name="sparkles" size={14} />
                   <span>AI-suggested response</span>
                 </div>
@@ -507,13 +505,13 @@
                 onChange={(e) => setReplyText(e.target.value)}
                 placeholder="Type your reply..."
                 rows={4}
-                className="w-full bg-zinc-800/50 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all resize-none text-sm"
+                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all resize-none text-sm"
               />
               
               <div className="flex items-center justify-between mt-3 gap-2">
                 <button
                   onClick={() => setReplyText(message.aiSuggestion || '')}
-                  className="hidden sm:flex items-center gap-1.5 text-sm text-zinc-400 hover:text-emerald-400 transition-colors"
+                  className="hidden sm:flex items-center gap-1.5 text-sm text-gray-500 hover:text-blue-600 transition-colors"
                 >
                   <Icon name="sparkles" size={14} />
                   Regenerate
@@ -522,14 +520,14 @@
                 <div className="flex items-center gap-2 ml-auto">
                   <button
                     onClick={() => setReplyText('')}
-                    className="px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+                    className="px-3 py-2 text-sm text-gray-400 hover:text-gray-900 transition-colors"
                   >
                     Clear
                   </button>
                   <button
                     onClick={handleSend}
                     disabled={!replyText.trim() || isSending}
-                    className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-medium px-4 py-2 rounded-lg hover:from-emerald-400 hover:to-emerald-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium px-4 py-2 rounded-lg hover:from-blue-500 hover:to-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSending ? (
                       <>
@@ -550,8 +548,8 @@
           
           {/* Already replied message */}
           {!message.needsResponse && (
-            <div className="p-4 border-t border-zinc-800 bg-zinc-900/50 text-center">
-              <p className="text-sm text-zinc-500 flex items-center justify-center gap-2">
+            <div className="p-4 border-t border-gray-200 bg-gray-50 text-center">
+              <p className="text-sm text-gray-500 flex items-center justify-center gap-2">
                 <Icon name="check" size={16} />
                 Conversation complete
               </p>
@@ -598,27 +596,27 @@
       };
       
       return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md p-6 animate-fade-in" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <div className="bg-white border border-gray-200 shadow-xl rounded-2xl w-full max-w-md p-6 animate-fade-in" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold text-white">Connect your eBay store</h3>
-              <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors">
+              <h3 className="text-xl font-semibold text-gray-900">Connect your eBay store</h3>
+              <button onClick={onClose} className="text-gray-500 hover:text-gray-900 transition-colors">
                 <Icon name="x" size={20} />
               </button>
             </div>
             
             {error && (
-              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
                 {error}
               </div>
             )}
             
             <div className="mb-4">
-              <label className="block text-sm text-zinc-400 mb-2">Store Name</label>
+              <label className="block text-sm text-gray-600 mb-2">Store Name</label>
               <select
                 value={storeName}
                 onChange={(e) => setStoreName(e.target.value)}
-                className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:border-blue-500"
               >
                 <option value="CCWraps">CCWraps</option>
                 <option value="AmericanStickerDepot">AmericanStickerDepot</option>
@@ -626,23 +624,23 @@
               </select>
             </div>
             
-            <div className="bg-zinc-800/50 rounded-xl p-4 mb-6">
-              <h4 className="text-sm font-medium text-white mb-3">OnteraAI will be able to:</h4>
-              <ul className="space-y-2 text-sm text-zinc-400">
+            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+              <h4 className="text-sm font-medium text-gray-900 mb-3">OnteraAI will be able to:</h4>
+              <ul className="space-y-2 text-sm text-gray-500">
                 <li className="flex items-center gap-2">
-                  <span className="text-emerald-400"><Icon name="check" size={16} /></span>
+                  <span className="text-blue-600"><Icon name="check" size={16} /></span>
                   <span>Read and respond to customer messages</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-emerald-400"><Icon name="check" size={16} /></span>
+                  <span className="text-blue-600"><Icon name="check" size={16} /></span>
                   <span>View orders and tracking information</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-emerald-400"><Icon name="check" size={16} /></span>
+                  <span className="text-blue-600"><Icon name="check" size={16} /></span>
                   <span>Create and manage listings</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-emerald-400"><Icon name="check" size={16} /></span>
+                  <span className="text-blue-600"><Icon name="check" size={16} /></span>
                   <span>Issue refunds when needed</span>
                 </li>
               </ul>
@@ -651,7 +649,7 @@
             <div className="flex gap-3">
               <button
                 onClick={onClose}
-                className="flex-1 px-4 py-3 text-zinc-400 hover:text-white border border-zinc-700 rounded-lg transition-colors"
+                className="flex-1 px-4 py-3 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg transition-colors"
               >
                 Cancel
               </button>
@@ -824,6 +822,7 @@
               conversation: [],
               messageType: m.messageType,
               externalMessageId: m.externalMessageId,
+              allMessageIds: m.allMessageIds || [],
             }));
             
             setMessages(formattedMessages);
@@ -839,10 +838,22 @@
         setLoadingMessages(false);
       };
       
-      const loadMessageDetail = async (messageId) => {
+      const loadMessageDetail = async (messageId, allMessageIds) => {
         if (!accessToken) return null;
-        
+
         try {
+          // Use the thread endpoint if we have multiple message IDs
+          if (allMessageIds && allMessageIds.length > 0) {
+            const res = await fetch(`${API_URL}/api/ebay/thread`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ access_token: accessToken, message_ids: allMessageIds }),
+            });
+            const detail = await res.json();
+            return detail;
+          }
+
+          // Fallback to single message
           const res = await fetch(`${API_URL}/api/ebay/message`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -858,21 +869,13 @@
       
       const handleSelectMessage = async (message) => {
         setSelectedMessage({ ...message, loadingDetail: true });
-        
-        const detail = await loadMessageDetail(message.id);
+
+        const detail = await loadMessageDetail(message.id, message.allMessageIds);
         if (detail && detail.conversation) {
-          // Transform conversation - API now returns 'seller' or 'buyer' directly
-          const conversation = detail.conversation.map((msg) => ({
-            from: msg.from, // Already 'seller' or 'buyer'
-            text: msg.text,
-            senderName: msg.senderName,
-            time: message.timestamp,
-          }));
-          
           setSelectedMessage({
             ...message,
             itemTitle: detail.itemTitle || message.itemTitle,
-            conversation: conversation,
+            conversation: detail.conversation,
             loadingDetail: false,
           });
         } else {
@@ -949,13 +952,13 @@
       return (
         <div className="min-h-screen flex">
           {/* Sidebar - Desktop */}
-          <div className="hidden md:flex w-64 bg-zinc-900/50 border-r border-zinc-800 flex-col">
-            <div className="p-4 border-b border-zinc-800">
+          <div className="hidden md:flex w-64 bg-gray-50 border-r border-gray-200 flex-col">
+            <div className="p-4 border-b border-gray-200">
               <a href="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold">O</span>
                 </div>
-                <span className="text-lg font-semibold text-white tracking-tight">OnteraAI</span>
+                <span className="text-lg font-semibold text-gray-900 tracking-tight">OnteraAI</span>
               </a>
             </div>
             
@@ -964,14 +967,14 @@
                 onClick={() => setActiveTab('inbox')}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                   activeTab === 'inbox' 
-                    ? 'bg-emerald-500/10 text-emerald-400' 
-                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                    ? 'bg-blue-50 text-blue-600' 
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
                 }`}
               >
                 <Icon name="inbox" />
                 <span>Inbox</span>
                 {needsResponseCount > 0 && (
-                  <span className="ml-auto bg-emerald-500 text-white text-xs font-medium px-2 py-0.5 rounded-full">
+                  <span className="ml-auto bg-blue-600 text-white text-xs font-medium px-2 py-0.5 rounded-full">
                     {needsResponseCount}
                   </span>
                 )}
@@ -981,8 +984,8 @@
                 onClick={() => setActiveTab('stores')}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                   activeTab === 'stores' 
-                    ? 'bg-emerald-500/10 text-emerald-400' 
-                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                    ? 'bg-blue-50 text-blue-600' 
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
                 }`}
               >
                 <Icon name="store" />
@@ -993,8 +996,8 @@
                 onClick={() => setActiveTab('settings')}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                   activeTab === 'settings' 
-                    ? 'bg-emerald-500/10 text-emerald-400' 
-                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                    ? 'bg-blue-50 text-blue-600' 
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
                 }`}
               >
                 <Icon name="settings" />
@@ -1003,18 +1006,18 @@
             </nav>
             
             {/* User */}
-            <div className="p-3 border-t border-zinc-800">
+            <div className="p-3 border-t border-gray-200">
               <div className="flex items-center gap-3 px-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-zinc-600 to-zinc-700 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
                   {user.email[0].toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white truncate">{user.email}</p>
-                  <p className="text-xs text-zinc-500">Pro Plan</p>
+                  <p className="text-sm text-gray-900 truncate">{user.email}</p>
+                  <p className="text-xs text-gray-500">Pro Plan</p>
                 </div>
                 <button 
                   onClick={onLogout}
-                  className="text-zinc-500 hover:text-white transition-colors"
+                  className="text-gray-500 hover:text-gray-900 transition-colors"
                   title="Sign out"
                 >
                   <Icon name="logout" size={18} />
@@ -1024,24 +1027,24 @@
           </div>
           
           {/* Mobile Header */}
-          <div className="md:hidden fixed top-0 left-0 right-0 bg-zinc-900/95 backdrop-blur-lg border-b border-zinc-800 z-40">
+          <div className="md:hidden fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-b border-gray-200 z-40">
             <div className="flex items-center justify-between p-3">
               <a href="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold">O</span>
                 </div>
-                <span className="text-lg font-semibold text-white">OnteraAI</span>
+                <span className="text-lg font-semibold text-gray-900">OnteraAI</span>
               </a>
               
               <div className="flex items-center gap-2">
                 {needsResponseCount > 0 && (
-                  <span className="bg-emerald-500 text-white text-xs font-medium px-2 py-1 rounded-full">
+                  <span className="bg-blue-600 text-white text-xs font-medium px-2 py-1 rounded-full">
                     {needsResponseCount}
                   </span>
                 )}
                 <button 
                   onClick={onLogout}
-                  className="text-zinc-400 hover:text-white p-2"
+                  className="text-gray-400 hover:text-gray-900 p-2"
                 >
                   <Icon name="logout" size={20} />
                 </button>
@@ -1049,7 +1052,7 @@
             </div>
             
             {/* Mobile Tabs */}
-            <div className="flex border-t border-zinc-800">
+            <div className="flex border-t border-gray-200">
               {[
                 { id: 'inbox', icon: 'inbox', label: 'Inbox' },
                 { id: 'stores', icon: 'store', label: 'Stores' },
@@ -1059,7 +1062,7 @@
                   key={tab.id}
                   onClick={() => { setActiveTab(tab.id); setSelectedMessage(null); }}
                   className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors ${
-                    activeTab === tab.id ? 'text-emerald-400' : 'text-zinc-500'
+                    activeTab === tab.id ? 'text-blue-600' : 'text-gray-400'
                   }`}
                 >
                   <Icon name={tab.icon} size={18} />
@@ -1076,11 +1079,11 @@
               {activeTab === 'inbox' && (
                 <>
                   {/* Inbox Header */}
-                  <div className="p-4 border-b border-zinc-800">
+                  <div className="p-4 border-b border-gray-200">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <h1 className="text-xl font-semibold text-white">Inbox</h1>
-                        <p className="text-sm text-zinc-500 mt-0.5">
+                        <h1 className="text-xl font-semibold text-gray-900">Inbox</h1>
+                        <p className="text-sm text-gray-500 mt-0.5">
                           {loadingMessages ? 'Loading messages...' : `${needsResponseCount} messages need your attention`}
                         </p>
                       </div>
@@ -1090,7 +1093,7 @@
                           if (connectedStore) loadMessages(connectedStore.refreshToken);
                         }}
                         disabled={loadingMessages}
-                        className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors bg-zinc-800/50 px-3 py-1.5 rounded-lg disabled:opacity-50"
+                        className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors bg-gray-100 px-3 py-1.5 rounded-lg disabled:opacity-50"
                       >
                         <Icon name="refresh" size={16} />
                         <span className="hidden sm:inline">{loadingMessages ? 'Loading...' : 'Refresh'}</span>
@@ -1109,8 +1112,8 @@
                           onClick={() => setFilter(f.id)}
                           className={`px-3 py-1.5 rounded-lg text-sm transition-colors whitespace-nowrap ${
                             filter === f.id
-                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                              : 'text-zinc-400 hover:text-white bg-zinc-800/30 border border-transparent'
+                              ? 'bg-blue-50 text-blue-600 border border-blue-300'
+                              : 'text-gray-400 hover:text-gray-900 bg-gray-50 border border-transparent'
                           }`}
                         >
                           {f.label}
@@ -1122,12 +1125,12 @@
                   {/* Message List */}
                   <div className="flex-1 overflow-y-auto">
                     {loadingMessages ? (
-                      <div className="flex flex-col items-center justify-center h-64 text-zinc-500">
-                        <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
+                      <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+                        <div className="w-8 h-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
                         <p className="mt-4">Loading messages from eBay...</p>
                       </div>
                     ) : filteredMessages.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center h-64 text-zinc-500">
+                      <div className="flex flex-col items-center justify-center h-64 text-gray-500">
                         <Icon name="inbox" size={48} />
                         <p className="mt-4">{stores.some(s => s.connected) ? 'No messages found' : 'Connect a store to see messages'}</p>
                       </div>
@@ -1136,21 +1139,21 @@
                         <button
                           key={message.id}
                           onClick={() => handleSelectMessage(message)}
-                          className={`w-full text-left p-4 border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors ${
-                            !message.read ? 'bg-zinc-800/20' : ''
-                          } ${selectedMessage?.id === message.id ? 'bg-zinc-800/50' : ''}`}
+                          className={`w-full text-left p-4 border-b border-gray-200/50 hover:bg-gray-50 transition-colors ${
+                            !message.read ? 'bg-blue-50/50' : ''
+                          } ${selectedMessage?.id === message.id ? 'bg-blue-50' : ''}`}
                         >
                           <div className="flex items-start gap-3">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0 ${
                               message.needsResponse 
                                 ? 'bg-amber-500/20 text-amber-400' 
-                                : 'bg-zinc-800 text-zinc-400'
+                                : 'bg-gray-100 text-gray-500'
                             }`}>
                               {message.sender[0].toUpperCase()}
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className={`font-medium ${!message.read ? 'text-white' : 'text-zinc-300'}`}>
+                                <span className={`font-medium ${!message.read ? 'text-gray-900' : 'text-gray-700'}`}>
                                   {message.sender}
                                 </span>
                                 {message.needsResponse && (
@@ -1160,18 +1163,18 @@
                                   </span>
                                 )}
                                 {message.aiSuggestion && (
-                                  <span className="flex items-center gap-1 text-xs text-emerald-400">
+                                  <span className="flex items-center gap-1 text-xs text-blue-600">
                                     <Icon name="sparkles" size={12} />
                                     AI ready
                                   </span>
                                 )}
                               </div>
-                              <p className="text-sm text-zinc-400 truncate mt-0.5">{message.subject}</p>
-                              <p className="text-sm text-zinc-500 truncate mt-1">
+                              <p className="text-sm text-gray-500 truncate mt-0.5">{message.subject}</p>
+                              <p className="text-sm text-gray-500 truncate mt-1">
                                 {message.conversation[message.conversation.length - 1]?.text}
                               </p>
                             </div>
-                            <div className="flex items-center gap-1 text-xs text-zinc-500 flex-shrink-0">
+                            <div className="flex items-center gap-1 text-xs text-gray-500 flex-shrink-0">
                               <Icon name="clock" size={12} />
                               {formatTime(message.timestamp)}
                             </div>
@@ -1187,12 +1190,12 @@
                 <div className="p-4 md:p-6">
                   <div className="flex items-center justify-between mb-6">
                     <div>
-                      <h1 className="text-xl font-semibold text-white">Connected Stores</h1>
-                      <p className="text-sm text-zinc-500 mt-0.5">Manage your e-commerce platforms</p>
+                      <h1 className="text-xl font-semibold text-gray-900">Connected Stores</h1>
+                      <p className="text-sm text-gray-500 mt-0.5">Manage your e-commerce platforms</p>
                     </div>
                     <button
                       onClick={() => setShowConnectModal(true)}
-                      className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-medium px-4 py-2 rounded-lg hover:from-emerald-400 hover:to-emerald-500 transition-all text-sm"
+                      className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium px-4 py-2 rounded-lg hover:from-blue-500 hover:to-blue-600 transition-all text-sm"
                     >
                       <span>+</span>
                       <span className="hidden sm:inline">Connect Store</span>
@@ -1203,22 +1206,22 @@
                     {stores.map((store) => (
                       <div
                         key={store.id}
-                        className={`bg-zinc-900/50 border rounded-xl p-4 md:p-5 ${
-                          store.connected ? 'border-emerald-500/30' : 'border-zinc-800'
+                        className={`bg-white border shadow-sm rounded-xl p-4 md:p-5 ${
+                          store.connected ? 'border-blue-300' : 'border-gray-200'
                         }`}
                       >
                         <div className="flex items-center justify-between gap-4">
                           <div className="flex items-center gap-3 md:gap-4">
                             <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
                               store.connected 
-                                ? 'bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 text-emerald-400' 
-                                : 'bg-zinc-800 text-zinc-500'
+                                ? 'bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600' 
+                                : 'bg-gray-100 text-gray-500'
                             }`}>
                               <EbayLogo />
                             </div>
                             <div>
-                              <h3 className="text-white font-medium">{store.name}</h3>
-                              <p className={`text-sm ${store.connected ? 'text-emerald-400' : 'text-zinc-500'}`}>
+                              <h3 className="text-gray-900 font-medium">{store.name}</h3>
+                              <p className={`text-sm ${store.connected ? 'text-blue-600' : 'text-gray-500'}`}>
                                 {store.connected ? 'Connected' : 'Not connected'}
                               </p>
                             </div>
@@ -1227,21 +1230,21 @@
                           {store.connected ? (
                             <div className="flex items-center gap-4 md:gap-6 text-sm">
                               <div className="text-center hidden sm:block">
-                                <p className="text-white font-medium">{store.messages}</p>
-                                <p className="text-zinc-500 text-xs">Messages</p>
+                                <p className="text-gray-900 font-medium">{store.messages}</p>
+                                <p className="text-gray-500 text-xs">Messages</p>
                               </div>
                               <div className="text-center hidden sm:block">
-                                <p className="text-white font-medium">{store.orders}</p>
-                                <p className="text-zinc-500 text-xs">Orders</p>
+                                <p className="text-gray-900 font-medium">{store.orders}</p>
+                                <p className="text-gray-500 text-xs">Orders</p>
                               </div>
-                              <button className="text-zinc-400 hover:text-white transition-colors">
+                              <button className="text-gray-400 hover:text-gray-900 transition-colors">
                                 <Icon name="settings" size={18} />
                               </button>
                             </div>
                           ) : (
                             <button
                               onClick={() => setShowConnectModal(true)}
-                              className="text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors"
+                              className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
                             >
                               Connect →
                             </button>
@@ -1253,11 +1256,11 @@
                   
                   {/* Coming Soon */}
                   <div className="mt-8">
-                    <h2 className="text-sm font-medium text-zinc-500 uppercase tracking-wider mb-4">Coming Soon</h2>
+                    <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Coming Soon</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       {['Amazon', 'Shopify', 'TikTok Shop', 'Etsy'].map((platform) => (
-                        <div key={platform} className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-4 text-center opacity-60">
-                          <p className="text-zinc-400 text-sm">{platform}</p>
+                        <div key={platform} className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center opacity-60">
+                          <p className="text-gray-500 text-sm">{platform}</p>
                         </div>
                       ))}
                     </div>
@@ -1267,16 +1270,16 @@
               
               {activeTab === 'settings' && (
                 <div className="p-4 md:p-6">
-                  <h1 className="text-xl font-semibold text-white mb-6">Settings</h1>
+                  <h1 className="text-xl font-semibold text-gray-900 mb-6">Settings</h1>
                   
                   <div className="space-y-6 max-w-2xl">
-                    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 md:p-5">
-                      <h3 className="text-white font-medium mb-4">AI Response Settings</h3>
+                    <div className="bg-white border shadow-sm border-gray-200 rounded-xl p-4 md:p-5">
+                      <h3 className="text-gray-900 font-medium mb-4">AI Response Settings</h3>
                       <div className="space-y-4">
                         <label className="flex items-center justify-between gap-4">
                           <div>
-                            <p className="text-zinc-300">Auto-respond to messages</p>
-                            <p className="text-sm text-zinc-500">AI will automatically reply to customer messages</p>
+                            <p className="text-gray-700">Auto-respond to messages</p>
+                            <p className="text-sm text-gray-500">AI will automatically reply to customer messages</p>
                           </div>
                           <label className="toggle-switch flex-shrink-0">
                             <input type="checkbox" />
@@ -1286,8 +1289,8 @@
                         
                         <label className="flex items-center justify-between gap-4">
                           <div>
-                            <p className="text-zinc-300">Require approval</p>
-                            <p className="text-sm text-zinc-500">Review AI responses before sending</p>
+                            <p className="text-gray-700">Require approval</p>
+                            <p className="text-sm text-gray-500">Review AI responses before sending</p>
                           </div>
                           <label className="toggle-switch flex-shrink-0">
                             <input type="checkbox" defaultChecked />
@@ -1297,13 +1300,13 @@
                       </div>
                     </div>
                     
-                    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 md:p-5">
-                      <h3 className="text-white font-medium mb-4">Notifications</h3>
+                    <div className="bg-white border shadow-sm border-gray-200 rounded-xl p-4 md:p-5">
+                      <h3 className="text-gray-900 font-medium mb-4">Notifications</h3>
                       <div className="space-y-4">
                         <label className="flex items-center justify-between gap-4">
                           <div>
-                            <p className="text-zinc-300">Email notifications</p>
-                            <p className="text-sm text-zinc-500">Get notified of new messages</p>
+                            <p className="text-gray-700">Email notifications</p>
+                            <p className="text-sm text-gray-500">Get notified of new messages</p>
                           </div>
                           <label className="toggle-switch flex-shrink-0">
                             <input type="checkbox" defaultChecked />
@@ -1313,8 +1316,8 @@
                         
                         <label className="flex items-center justify-between gap-4">
                           <div>
-                            <p className="text-zinc-300">Daily digest</p>
-                            <p className="text-sm text-zinc-500">Summary of store activity</p>
+                            <p className="text-gray-700">Daily digest</p>
+                            <p className="text-sm text-gray-500">Summary of store activity</p>
                           </div>
                           <label className="toggle-switch flex-shrink-0">
                             <input type="checkbox" defaultChecked />
@@ -1324,16 +1327,16 @@
                       </div>
                     </div>
                     
-                    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 md:p-5">
-                      <h3 className="text-white font-medium mb-4">Account</h3>
+                    <div className="bg-white border shadow-sm border-gray-200 rounded-xl p-4 md:p-5">
+                      <h3 className="text-gray-900 font-medium mb-4">Account</h3>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-zinc-400">Email</span>
-                          <span className="text-white">{user.email}</span>
+                          <span className="text-gray-500">Email</span>
+                          <span className="text-gray-900">{user.email}</span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-zinc-400">Plan</span>
-                          <span className="text-emerald-400">Pro - $149/mo</span>
+                          <span className="text-gray-500">Plan</span>
+                          <span className="text-blue-600">Pro - $149/mo</span>
                         </div>
                       </div>
                     </div>
@@ -1344,7 +1347,7 @@
             
             {/* Message Detail Panel */}
             {selectedMessage && (
-              <div className="fixed inset-0 md:relative md:inset-auto w-full lg:w-[480px] md:border-l border-zinc-800 bg-[#0a0a0a] md:bg-zinc-900/30 flex flex-col z-50 md:z-auto pt-[105px] md:pt-0">
+              <div className="fixed inset-0 md:relative md:inset-auto w-full lg:w-[480px] md:border-l border-gray-200 bg-white md:bg-gray-50/80 flex flex-col z-50 md:z-auto pt-[105px] md:pt-0">
                 <MessageThread
                   message={selectedMessage}
                   onSendReply={handleSendReply}
@@ -1402,8 +1405,8 @@
         return (
           <div className="min-h-screen flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
-              <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
-              <p className="text-zinc-500 text-sm">Loading...</p>
+              <div className="w-8 h-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
+              <p className="text-gray-500 text-sm">Loading...</p>
             </div>
           </div>
         );
