@@ -386,16 +386,15 @@
         setSendSuccess(false);
 
         try {
-          const res = await fetch(`${API_URL}/api/ebay/send-reply`, {
+          const res = await fetch(`${API_URL}/api/ebay/send-message`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               access_token: accessToken,
+              conversation_id: message.conversationId,
+              recipient_username: message.sender,
+              message_text: replyText,
               item_id: message.itemId,
-              message_id: message.id,
-              external_message_id: message.externalMessageId,
-              recipient_id: message.sender,
-              body: replyText,
             }),
           });
           const data = await res.json();
@@ -809,36 +808,36 @@
           
           setAccessToken(tokenData.access_token);
           
-          // Step 2: Fetch messages
-          const messagesRes = await fetch(`${API_URL}/api/ebay/messages`, {
+          // Step 2: Fetch conversations via REST Message API
+          const messagesRes = await fetch(`${API_URL}/api/ebay/conversations`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ access_token: tokenData.access_token }),
           });
           const messagesData = await messagesRes.json();
-          
+
           if (messagesData.messages) {
             // Transform to UI format
             const formattedMessages = messagesData.messages.map(m => ({
-              id: m.id,
+              id: m.id || m.conversationId,
+              conversationId: m.conversationId,
               sender: m.sender,
               subject: m.subject || 'No subject',
               itemId: m.itemId,
               itemTitle: m.itemTitle || 'eBay Item',
               timestamp: m.receiveDate,
               read: m.read,
-              replied: m.replied,
-              needsResponse: m.responseEnabled && !m.replied,
+              replied: false,
+              needsResponse: m.needsReply || m.unreadCount > 0,
               conversation: [],
-              messageType: m.messageType,
-              externalMessageId: m.externalMessageId,
-              allMessageIds: m.allMessageIds || [],
+              unreadCount: m.unreadCount || 0,
+              latestMessage: m.latestMessage || '',
             }));
-            
+
             setMessages(formattedMessages);
-            
+
             // Update store message count
-            setStores(prev => prev.map(s => 
+            setStores(prev => prev.map(s =>
               s.connected ? { ...s, messages: formattedMessages.length } : s
             ));
           }
@@ -848,29 +847,39 @@
         setLoadingMessages(false);
       };
       
-      const loadMessageDetail = async (messageId, allMessageIds) => {
+      const loadMessageDetail = async (message) => {
         if (!accessToken) return null;
 
         try {
-          // Use the thread endpoint if we have multiple message IDs
-          if (allMessageIds && allMessageIds.length > 0) {
-            const res = await fetch(`${API_URL}/api/ebay/thread`, {
+          // Use REST Message API conversation endpoint
+          if (message.conversationId) {
+            const res = await fetch(`${API_URL}/api/ebay/conversation`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ access_token: accessToken, message_ids: allMessageIds }),
+              body: JSON.stringify({ access_token: accessToken, conversation_id: message.conversationId }),
             });
             const detail = await res.json();
+            // Worker already tags each message as buyer/seller based on first message sender
             return detail;
           }
 
-          // Fallback to single message
+          // Fallback to legacy thread endpoint for old-format messages
+          if (message.allMessageIds && message.allMessageIds.length > 0) {
+            const res = await fetch(`${API_URL}/api/ebay/thread`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ access_token: accessToken, message_ids: message.allMessageIds }),
+            });
+            return await res.json();
+          }
+
+          // Final fallback to single message
           const res = await fetch(`${API_URL}/api/ebay/message`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ access_token: accessToken, message_id: messageId }),
+            body: JSON.stringify({ access_token: accessToken, message_id: message.id }),
           });
-          const detail = await res.json();
-          return detail;
+          return await res.json();
         } catch (err) {
           console.error('Error loading message detail:', err);
           return null;
@@ -880,7 +889,7 @@
       const handleSelectMessage = async (message) => {
         setSelectedMessage({ ...message, loadingDetail: true });
 
-        const detail = await loadMessageDetail(message.id, message.allMessageIds);
+        const detail = await loadMessageDetail(message);
         if (detail && detail.conversation) {
           setSelectedMessage({
             ...message,
