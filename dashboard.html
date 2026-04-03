@@ -390,6 +390,7 @@
               access_token: accessToken,
               item_id: message.itemId,
               message_id: message.id,
+              external_message_id: message.externalMessageId,
               recipient_id: message.sender,
               body: replyText,
             }),
@@ -822,6 +823,7 @@
               needsResponse: m.responseEnabled && !m.replied,
               conversation: [],
               messageType: m.messageType,
+              externalMessageId: m.externalMessageId,
             }));
             
             setMessages(formattedMessages);
