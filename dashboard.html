@@ -365,20 +365,50 @@
     };
 
     // Message Thread Component
-    const MessageThread = ({ message, onSendReply, onClose }) => {
+    const MessageThread = ({ message, onSendReply, onClose, accessToken }) => {
       const [replyText, setReplyText] = useState(message.aiSuggestion || '');
       const [isSending, setIsSending] = useState(false);
+      const [sendError, setSendError] = useState('');
+      const [sendSuccess, setSendSuccess] = useState(false);
       const messagesEndRef = useRef(null);
-      
+
       useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, [message]);
-      
+
       const handleSend = async () => {
         if (!replyText.trim()) return;
         setIsSending(true);
-        await new Promise(r => setTimeout(r, 1500));
-        onSendReply(message.id, replyText);
+        setSendError('');
+        setSendSuccess(false);
+
+        try {
+          const res = await fetch(`${API_URL}/api/ebay/send-reply`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              access_token: accessToken,
+              item_id: message.itemId,
+              message_id: message.id,
+              recipient_id: message.sender,
+              body: replyText,
+            }),
+          });
+          const data = await res.json();
+
+          if (data.success) {
+            setSendSuccess(true);
+            onSendReply(message.id, replyText);
+            setReplyText('');
+          } else {
+            setSendError(data.error || 'Failed to send reply');
+            console.error('Send error:', data);
+          }
+        } catch (err) {
+          setSendError('Network error — could not reach server');
+          console.error('Send error:', err);
+        }
+
         setIsSending(false);
       };
       
@@ -453,6 +483,17 @@
           {/* Reply Area */}
           {message.needsResponse && (
             <div className="p-4 border-t border-zinc-800 bg-zinc-900/50">
+              {sendError && (
+                <div className="mb-3 p-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                  {sendError}
+                </div>
+              )}
+              {sendSuccess && (
+                <div className="mb-3 p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-400 text-sm flex items-center gap-2">
+                  <Icon name="check" size={14} />
+                  Reply sent successfully
+                </div>
+              )}
               {message.aiSuggestion && (
                 <div className="mb-3 flex items-center gap-2 text-xs text-emerald-400">
                   <Icon name="sparkles" size={14} />
@@ -846,22 +887,36 @@
       });
       
       const handleSendReply = (messageId, replyText) => {
+        // Update message in list — mark as replied, add to conversation
+        const updatedConversation = (msg) => [
+          { from: 'seller', text: replyText, senderName: 'You', time: new Date().toISOString() },
+          ...(msg.conversation || []),
+        ];
+
         setMessages(prev => prev.map(m => {
           if (m.id === messageId) {
             return {
               ...m,
               needsResponse: false,
               replied: true,
-              conversation: [...m.conversation, {
-                from: 'seller',
-                text: replyText,
-                time: new Date().toISOString(),
-              }],
+              conversation: updatedConversation(m),
             };
           }
           return m;
         }));
-        setSelectedMessage(null);
+
+        // Update the selected message in place (don't close the thread)
+        setSelectedMessage(prev => {
+          if (prev && prev.id === messageId) {
+            return {
+              ...prev,
+              needsResponse: false,
+              replied: true,
+              conversation: updatedConversation(prev),
+            };
+          }
+          return prev;
+        });
       };
       
       const handleConnectStore = async (storeName) => {
@@ -1292,6 +1347,7 @@
                   message={selectedMessage}
                   onSendReply={handleSendReply}
                   onClose={() => setSelectedMessage(null)}
+                  accessToken={accessToken}
                 />
               </div>
             )}
