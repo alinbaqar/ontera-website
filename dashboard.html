@@ -366,7 +366,12 @@
       const messagesEndRef = useRef(null);
 
       useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if (messagesEndRef.current) {
+          const container = messagesEndRef.current.closest('.overflow-y-auto');
+          if (container) {
+            container.scrollTop = container.scrollHeight;
+          }
+        }
       }, [message]);
 
       const handleSend = async () => {
