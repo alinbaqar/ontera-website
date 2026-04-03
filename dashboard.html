@@ -822,7 +822,9 @@
               id: m.id || m.conversationId,
               conversationId: m.conversationId,
               sender: m.sender,
-              subject: m.subject || 'No subject',
+              subject: m.latestMessage
+                ? (m.latestMessage.length > 80 ? m.latestMessage.substring(0, 80) + '...' : m.latestMessage)
+                : 'No messages yet',
               itemId: m.itemId,
               itemTitle: m.itemTitle || 'eBay Item',
               timestamp: m.receiveDate,
@@ -1189,9 +1191,6 @@
                                 )}
                               </div>
                               <p className="text-sm text-gray-500 truncate mt-0.5">{message.subject}</p>
-                              <p className="text-sm text-gray-500 truncate mt-1">
-                                {message.conversation[message.conversation.length - 1]?.text}
-                              </p>
                             </div>
                             <div className="flex items-center gap-1 text-xs text-gray-500 flex-shrink-0">
                               <Icon name="clock" size={12} />
