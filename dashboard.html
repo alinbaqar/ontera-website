@@ -1105,51 +1105,127 @@
             <div className={`flex-1 flex flex-col ${selectedMessage ? 'hidden lg:flex' : ''}`}>
               {activeTab === 'overview' && (
                 <div className="p-4 md:p-6 overflow-y-auto">
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h1 className="text-xl font-semibold text-gray-900">Overview</h1>
-                      <p className="text-sm text-gray-500 mt-0.5">Welcome back, {user.email.split('@')[0]}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <select className="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-600 bg-white focus:outline-none focus:border-blue-500">
-                        <option>Last 30 days</option>
-                        <option>Last 7 days</option>
-                        <option>Last 90 days</option>
-                        <option>This year</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Summary Cards */}
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
-                    {[
-                      { label: 'Today', sales: '$0.00', orders: '0', profit: '$0.00', change: null },
-                      { label: 'Yesterday', sales: '$0.00', orders: '0', profit: '$0.00', change: null },
-                      { label: 'Last 7 Days', sales: '$9.49', orders: '1', profit: '$7.97', change: '+12%' },
-                      { label: 'Last 30 Days', sales: '$183.63', orders: '35', profit: '$159.73', change: '+8%' },
-                    ].map((card, i) => (
-                      <div key={i} className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-sm font-medium text-gray-500">{card.label}</span>
-                          {card.change && (
-                            <span className="flex items-center gap-0.5 text-xs font-medium text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">
-                              <Icon name="arrowUp" size={10} />
-                              {card.change}
-                            </span>
-                          )}
+                  {/* Otis Hero Section */}
+                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-5 md:p-6 mb-6 text-white">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center flex-shrink-0">
+                          <Icon name="sparkles" size={24} />
                         </div>
-                        <p className="text-2xl font-bold text-gray-900">{card.sales}</p>
-                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-                          <span>{card.orders} orders</span>
-                          <span className="text-gray-300">|</span>
-                          <span>Profit: {card.profit}</span>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h2 className="text-lg font-semibold">Otis</h2>
+                            <span className="flex items-center gap-1 text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                              <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
+                              Active
+                            </span>
+                          </div>
+                          <p className="text-blue-100 text-sm mt-0.5">Your AI assistant handled 6 tasks today</p>
                         </div>
                       </div>
-                    ))}
+                      <div className="hidden md:flex items-center gap-6 text-sm">
+                        <div className="text-center">
+                          <p className="text-2xl font-bold">6</p>
+                          <p className="text-blue-200 text-xs">Messages sent</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-2xl font-bold">12m</p>
+                          <p className="text-blue-200 text-xs">Avg response</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-2xl font-bold">100%</p>
+                          <p className="text-blue-200 text-xs">Success rate</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Otis Activity Feed */}
+                    <div className="mt-4 pt-4 border-t border-white/20">
+                      <div className="flex items-center justify-between mb-3">
+                        <p className="text-sm font-medium text-blue-100">Recent Activity</p>
+                        <button className="text-xs text-blue-200 hover:text-white transition-colors">View full log</button>
+                      </div>
+                      <div className="space-y-2">
+                        {[
+                          { action: 'Replied to ccwraps regarding shipping status inquiry', time: '2h ago', type: 'message' },
+                          { action: 'Replied to el_chupakabra with order confirmation details', time: '3h ago', type: 'message' },
+                          { action: 'Generated daily sales report for April 2', time: '8h ago', type: 'report' },
+                          { action: 'Replied to monte.carlo79 regarding restocking timeline', time: '12h ago', type: 'message' },
+                          { action: 'Flagged return request from sarah_designs for review', time: '1d ago', type: 'alert' },
+                        ].map((activity, i) => (
+                          <div key={i} className="flex items-center gap-3 bg-white/10 rounded-lg px-3 py-2">
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                              activity.type === 'message' ? 'bg-blue-400/30' :
+                              activity.type === 'report' ? 'bg-green-400/30' : 'bg-orange-400/30'
+                            }`}>
+                              <Icon name={activity.type === 'message' ? 'send' : activity.type === 'report' ? 'check' : 'alert'} size={12} />
+                            </div>
+                            <p className="text-sm text-white/90 flex-1 truncate">{activity.action}</p>
+                            <span className="text-xs text-blue-200 flex-shrink-0">{activity.time}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Charts Row */}
+                  {/* Key Metrics Row */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+                    <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm text-gray-500">Revenue</span>
+                        <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center text-green-600">
+                          <Icon name="dollar" size={16} />
+                        </div>
+                      </div>
+                      <p className="text-2xl font-bold text-gray-900">$183.63</p>
+                      <div className="flex items-center gap-1 mt-1">
+                        <span className="flex items-center gap-0.5 text-xs font-medium text-green-600">
+                          <Icon name="arrowUp" size={10} /> 8.2%
+                        </span>
+                        <span className="text-xs text-gray-400">vs prior period</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm text-gray-500">Profit</span>
+                        <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
+                          <Icon name="trending" size={16} />
+                        </div>
+                      </div>
+                      <p className="text-2xl font-bold text-gray-900">$159.73</p>
+                      <div className="flex items-center gap-1 mt-1">
+                        <span className="flex items-center gap-0.5 text-xs font-medium text-green-600">
+                          <Icon name="arrowUp" size={10} /> 5.1%
+                        </span>
+                        <span className="text-xs text-gray-400">86.9% margin</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm text-gray-500">Awaiting Shipment</span>
+                        <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center text-orange-600">
+                          <Icon name="package" size={16} />
+                        </div>
+                      </div>
+                      <p className="text-2xl font-bold text-gray-900">3</p>
+                      <p className="text-xs text-orange-600 mt-1">1 overdue</p>
+                    </div>
+
+                    <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveTab('inbox')}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm text-gray-500">Needs Reply</span>
+                        <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center text-red-500">
+                          <Icon name="inbox" size={16} />
+                        </div>
+                      </div>
+                      <p className="text-2xl font-bold text-gray-900">{needsResponseCount}</p>
+                      <p className="text-xs text-gray-500 mt-1">Avg response: 2.4h</p>
+                    </div>
+                  </div>
+
+                  {/* Middle Row: Sales Chart + Otis Daily Report */}
                   <div className="grid lg:grid-cols-3 gap-4 mb-6">
                     {/* Sales Chart */}
                     <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-4 md:p-5">
@@ -1158,19 +1234,17 @@
                           <h3 className="font-medium text-gray-900">Sales Trend</h3>
                           <p className="text-sm text-gray-500 mt-0.5">Revenue over time</p>
                         </div>
-                        <div className="flex gap-3 text-xs">
-                          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span>Revenue</span>
-                          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-blue-200"></span>Orders</span>
-                        </div>
+                        <select className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 text-gray-500 bg-white">
+                          <option>30 Days</option>
+                          <option>7 Days</option>
+                          <option>90 Days</option>
+                        </select>
                       </div>
-                      {/* SVG Line Chart */}
                       <div className="relative h-48">
                         <svg viewBox="0 0 600 180" className="w-full h-full" preserveAspectRatio="none">
-                          {/* Grid lines */}
                           <line x1="0" y1="45" x2="600" y2="45" stroke="#f3f4f6" strokeWidth="1"/>
                           <line x1="0" y1="90" x2="600" y2="90" stroke="#f3f4f6" strokeWidth="1"/>
                           <line x1="0" y1="135" x2="600" y2="135" stroke="#f3f4f6" strokeWidth="1"/>
-                          {/* Revenue line */}
                           <defs>
                             <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
                               <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2"/>
@@ -1180,13 +1254,8 @@
                           <path d="M0,160 L20,155 L40,120 L60,140 L80,130 L100,145 L120,150 L140,135 L160,110 L180,100 L200,80 L220,60 L240,75 L260,50 L280,65 L300,40 L320,55 L340,70 L360,45 L380,60 L400,55 L420,70 L440,85 L460,90 L480,75 L500,60 L520,50 L540,65 L560,55 L580,40 L600,30" fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                           <path d="M0,160 L20,155 L40,120 L60,140 L80,130 L100,145 L120,150 L140,135 L160,110 L180,100 L200,80 L220,60 L240,75 L260,50 L280,65 L300,40 L320,55 L340,70 L360,45 L380,60 L400,55 L420,70 L440,85 L460,90 L480,75 L500,60 L520,50 L540,65 L560,55 L580,40 L600,30 L600,180 L0,180 Z" fill="url(#blueGrad)"/>
                         </svg>
-                        {/* Y-axis labels */}
                         <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-[10px] text-gray-400 py-1">
-                          <span>$200</span>
-                          <span>$150</span>
-                          <span>$100</span>
-                          <span>$50</span>
-                          <span>$0</span>
+                          <span>$200</span><span>$150</span><span>$100</span><span>$50</span><span>$0</span>
                         </div>
                       </div>
                       <div className="flex justify-between text-[10px] text-gray-400 mt-1 px-4">
@@ -1194,62 +1263,80 @@
                       </div>
                     </div>
 
-                    {/* Quick Stats */}
-                    <div className="space-y-4">
-                      {/* Messages Widget */}
-                      <div className="bg-white border border-gray-200 rounded-xl p-4">
-                        <div className="flex items-center gap-2 mb-3">
-                          <Icon name="inbox" size={16} />
-                          <h3 className="font-medium text-gray-900 text-sm">Messages</h3>
+                    {/* Otis Daily Report */}
+                    <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-5">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-6 h-6 bg-blue-100 rounded-md flex items-center justify-center">
+                          <Icon name="sparkles" size={14} />
                         </div>
-                        <div className="space-y-2.5">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-500">Needs reply</span>
-                            <span className="text-sm font-semibold text-orange-600">{needsResponseCount}</span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-500">Total conversations</span>
-                            <span className="text-sm font-semibold text-gray-900">{messages.length}</span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-500">Avg response time</span>
-                            <span className="text-sm font-semibold text-gray-900">2.4h</span>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => setActiveTab('inbox')}
-                          className="w-full mt-3 text-xs text-blue-600 hover:text-blue-800 font-medium py-2 bg-blue-50 rounded-lg transition-colors"
-                        >
-                          View Inbox
-                        </button>
+                        <h3 className="font-medium text-gray-900 text-sm">Otis Daily Report</h3>
                       </div>
-
-                      {/* Store Health */}
-                      <div className="bg-white border border-gray-200 rounded-xl p-4">
-                        <div className="flex items-center gap-2 mb-3">
-                          <Icon name="trending" size={16} />
-                          <h3 className="font-medium text-gray-900 text-sm">Store Health</h3>
+                      <p className="text-xs text-gray-500 mb-3">April 3, 2026</p>
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-2">
+                          <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Icon name="check" size={10} />
+                          </div>
+                          <p className="text-sm text-gray-700">Responded to 6 customer messages with avg 12 min response time</p>
                         </div>
-                        <div className="space-y-2.5">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-500">Active listings</span>
-                            <span className="text-sm font-semibold text-gray-900">142</span>
+                        <div className="flex items-start gap-2">
+                          <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Icon name="check" size={10} />
                           </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-500">Feedback score</span>
-                            <span className="text-sm font-semibold text-green-600">99.2%</span>
+                          <p className="text-sm text-gray-700">Resolved 1 shipping inquiry for ccwraps with tracking update</p>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Icon name="check" size={10} />
                           </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-500">Defect rate</span>
-                            <span className="text-sm font-semibold text-green-600">0.3%</span>
+                          <p className="text-sm text-gray-700">Issued refund to ccwraps for delayed shipment</p>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <div className="w-4 h-4 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Icon name="alert" size={10} />
                           </div>
+                          <p className="text-sm text-gray-700">Flagged return from sarah_designs for your review</p>
                         </div>
                       </div>
+                      <button className="w-full mt-4 text-xs text-blue-600 hover:text-blue-800 font-medium py-2 bg-blue-50 rounded-lg transition-colors">
+                        View past reports
+                      </button>
                     </div>
                   </div>
 
-                  {/* Bottom Row */}
+                  {/* Bottom Row: Recommendations + Recent Orders */}
                   <div className="grid lg:grid-cols-2 gap-4">
+                    {/* Otis Recommendations */}
+                    <div className="bg-white border border-blue-100 rounded-xl p-4 md:p-5">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 bg-blue-100 rounded-md flex items-center justify-center">
+                            <Icon name="sparkles" size={14} />
+                          </div>
+                          <h3 className="font-medium text-gray-900">Otis Recommends</h3>
+                        </div>
+                        <span className="text-xs text-gray-400">Updated today</span>
+                      </div>
+                      <div className="space-y-3">
+                        {[
+                          { title: 'Restock Holographic Dragon Skin', desc: 'Top seller with 12 units sold in 30 days. Only 4 remaining in inventory.', priority: 'high' },
+                          { title: 'Respond to monte.carlo79', desc: 'Buyer asked about restocking 5 days ago. Following up could close a repeat sale.', priority: 'medium' },
+                          { title: 'Optimize listing descriptions', desc: '3 listings have below-average conversion rates. Updated descriptions could improve by 15-20%.', priority: 'low' },
+                        ].map((rec, i) => (
+                          <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                            <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${
+                              rec.priority === 'high' ? 'bg-red-500' :
+                              rec.priority === 'medium' ? 'bg-orange-400' : 'bg-blue-400'
+                            }`}></div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-gray-900">{rec.title}</p>
+                              <p className="text-xs text-gray-500 mt-0.5">{rec.desc}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                     {/* Recent Orders */}
                     <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-5">
                       <div className="flex items-center justify-between mb-4">
@@ -1285,38 +1372,6 @@
                                 order.status === 'Shipped' ? 'text-blue-600' : 'text-orange-600'
                               }`}>{order.status}</span>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Top Selling Items */}
-                    <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-5">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-medium text-gray-900">Top Selling Items</h3>
-                        <span className="text-xs text-gray-500">Last 30 days</span>
-                      </div>
-                      <div className="space-y-3">
-                        {[
-                          { name: 'Holographic Dragon Card Skin', sold: 12, revenue: '$65.88' },
-                          { name: 'Anime Card Skin - Naruto Edition', sold: 8, revenue: '$39.92' },
-                          { name: 'Custom Credit Card Skin', sold: 6, revenue: '$32.94' },
-                          { name: 'Marble Effect - Rose Gold', sold: 5, revenue: '$27.45' },
-                        ].map((item, i) => (
-                          <div key={i} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
-                            <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 font-bold text-sm flex-shrink-0">
-                              {i + 1}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm text-gray-900 truncate">{item.name}</p>
-                              <div className="flex items-center gap-2 mt-0.5">
-                                <div className="flex-1 bg-gray-100 rounded-full h-1.5">
-                                  <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: `${(item.sold / 12) * 100}%` }}></div>
-                                </div>
-                                <span className="text-xs text-gray-500 flex-shrink-0">{item.sold} sold</span>
-                              </div>
-                            </div>
-                            <span className="text-sm font-medium text-gray-900 flex-shrink-0">{item.revenue}</span>
                           </div>
                         ))}
                       </div>
