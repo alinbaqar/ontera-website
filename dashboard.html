@@ -170,6 +170,13 @@
         alert: `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>`,
         back: `<polyline points="15 18 9 12 15 6"></polyline>`,
         x: `<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>`,
+        overview: `<rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect>`,
+        orders: `<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path>`,
+        trending: `<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline>`,
+        dollar: `<line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>`,
+        package: `<line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line>`,
+        arrowUp: `<line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline>`,
+        arrowDown: `<line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline>`,
       };
       
       return (
@@ -690,7 +697,7 @@
 
     // Main Dashboard
     const Dashboard = ({ user, onLogout }) => {
-      const [activeTab, setActiveTab] = useState('inbox');
+      const [activeTab, setActiveTab] = useState('overview');
       const [messages, setMessages] = useState([]);
       const [loadingMessages, setLoadingMessages] = useState(false);
       const [stores, setStores] = useState([]);
@@ -984,46 +991,44 @@
             </div>
             
             <nav className="flex-1 p-3 space-y-1">
-              <button
-                onClick={() => setActiveTab('inbox')}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                  activeTab === 'inbox' 
-                    ? 'bg-blue-50 text-blue-600' 
-                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-              >
-                <Icon name="inbox" />
-                <span>Inbox</span>
-                {needsResponseCount > 0 && (
-                  <span className="ml-auto bg-blue-600 text-white text-xs font-medium px-2 py-0.5 rounded-full">
-                    {needsResponseCount}
-                  </span>
-                )}
-              </button>
-              
-              <button
-                onClick={() => { setActiveTab('stores'); setSelectedMessage(null); }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                  activeTab === 'stores'
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-              >
-                <Icon name="store" />
-                <span>Stores</span>
-              </button>
+              {[
+                { id: 'overview', icon: 'overview', label: 'Overview' },
+                { id: 'inbox', icon: 'inbox', label: 'Inbox', badge: needsResponseCount },
+                { id: 'orders', icon: 'orders', label: 'Orders' },
+                { id: 'stores', icon: 'store', label: 'Stores' },
+              ].map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => { setActiveTab(item.id); setSelectedMessage(null); }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                    activeTab === item.id
+                      ? 'bg-blue-50 text-blue-600'
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
+                >
+                  <Icon name={item.icon} />
+                  <span>{item.label}</span>
+                  {item.badge > 0 && (
+                    <span className="ml-auto bg-blue-600 text-white text-xs font-medium px-2 py-0.5 rounded-full">
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              ))}
 
-              <button
-                onClick={() => { setActiveTab('settings'); setSelectedMessage(null); }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                  activeTab === 'settings'
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-              >
-                <Icon name="settings" />
-                <span>Settings</span>
-              </button>
+              <div className="pt-4 mt-4 border-t border-gray-200">
+                <button
+                  onClick={() => { setActiveTab('settings'); setSelectedMessage(null); }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                    activeTab === 'settings'
+                      ? 'bg-blue-50 text-blue-600'
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
+                >
+                  <Icon name="settings" />
+                  <span>Settings</span>
+                </button>
+              </div>
             </nav>
             
             {/* User */}
@@ -1075,9 +1080,10 @@
             {/* Mobile Tabs */}
             <div className="flex border-t border-gray-200">
               {[
+                { id: 'overview', icon: 'overview', label: 'Overview' },
                 { id: 'inbox', icon: 'inbox', label: 'Inbox' },
+                { id: 'orders', icon: 'orders', label: 'Orders' },
                 { id: 'stores', icon: 'store', label: 'Stores' },
-                { id: 'settings', icon: 'settings', label: 'Settings' },
               ].map(tab => (
                 <button
                   key={tab.id}
@@ -1097,6 +1103,292 @@
           <div className="flex-1 flex flex-col md:flex-row pt-[105px] md:pt-0">
             {/* Content Area */}
             <div className={`flex-1 flex flex-col ${selectedMessage ? 'hidden lg:flex' : ''}`}>
+              {activeTab === 'overview' && (
+                <div className="p-4 md:p-6 overflow-y-auto">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h1 className="text-xl font-semibold text-gray-900">Overview</h1>
+                      <p className="text-sm text-gray-500 mt-0.5">Welcome back, {user.email.split('@')[0]}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <select className="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-600 bg-white focus:outline-none focus:border-blue-500">
+                        <option>Last 30 days</option>
+                        <option>Last 7 days</option>
+                        <option>Last 90 days</option>
+                        <option>This year</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Summary Cards */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+                    {[
+                      { label: 'Today', sales: '$0.00', orders: '0', profit: '$0.00', change: null },
+                      { label: 'Yesterday', sales: '$0.00', orders: '0', profit: '$0.00', change: null },
+                      { label: 'Last 7 Days', sales: '$9.49', orders: '1', profit: '$7.97', change: '+12%' },
+                      { label: 'Last 30 Days', sales: '$183.63', orders: '35', profit: '$159.73', change: '+8%' },
+                    ].map((card, i) => (
+                      <div key={i} className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-sm font-medium text-gray-500">{card.label}</span>
+                          {card.change && (
+                            <span className="flex items-center gap-0.5 text-xs font-medium text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">
+                              <Icon name="arrowUp" size={10} />
+                              {card.change}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-2xl font-bold text-gray-900">{card.sales}</p>
+                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                          <span>{card.orders} orders</span>
+                          <span className="text-gray-300">|</span>
+                          <span>Profit: {card.profit}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Charts Row */}
+                  <div className="grid lg:grid-cols-3 gap-4 mb-6">
+                    {/* Sales Chart */}
+                    <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-4 md:p-5">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="font-medium text-gray-900">Sales Trend</h3>
+                          <p className="text-sm text-gray-500 mt-0.5">Revenue over time</p>
+                        </div>
+                        <div className="flex gap-3 text-xs">
+                          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span>Revenue</span>
+                          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-blue-200"></span>Orders</span>
+                        </div>
+                      </div>
+                      {/* SVG Line Chart */}
+                      <div className="relative h-48">
+                        <svg viewBox="0 0 600 180" className="w-full h-full" preserveAspectRatio="none">
+                          {/* Grid lines */}
+                          <line x1="0" y1="45" x2="600" y2="45" stroke="#f3f4f6" strokeWidth="1"/>
+                          <line x1="0" y1="90" x2="600" y2="90" stroke="#f3f4f6" strokeWidth="1"/>
+                          <line x1="0" y1="135" x2="600" y2="135" stroke="#f3f4f6" strokeWidth="1"/>
+                          {/* Revenue line */}
+                          <defs>
+                            <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2"/>
+                              <stop offset="100%" stopColor="#3b82f6" stopOpacity="0"/>
+                            </linearGradient>
+                          </defs>
+                          <path d="M0,160 L20,155 L40,120 L60,140 L80,130 L100,145 L120,150 L140,135 L160,110 L180,100 L200,80 L220,60 L240,75 L260,50 L280,65 L300,40 L320,55 L340,70 L360,45 L380,60 L400,55 L420,70 L440,85 L460,90 L480,75 L500,60 L520,50 L540,65 L560,55 L580,40 L600,30" fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M0,160 L20,155 L40,120 L60,140 L80,130 L100,145 L120,150 L140,135 L160,110 L180,100 L200,80 L220,60 L240,75 L260,50 L280,65 L300,40 L320,55 L340,70 L360,45 L380,60 L400,55 L420,70 L440,85 L460,90 L480,75 L500,60 L520,50 L540,65 L560,55 L580,40 L600,30 L600,180 L0,180 Z" fill="url(#blueGrad)"/>
+                        </svg>
+                        {/* Y-axis labels */}
+                        <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-[10px] text-gray-400 py-1">
+                          <span>$200</span>
+                          <span>$150</span>
+                          <span>$100</span>
+                          <span>$50</span>
+                          <span>$0</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-[10px] text-gray-400 mt-1 px-4">
+                        <span>Mar 5</span><span>Mar 10</span><span>Mar 15</span><span>Mar 20</span><span>Mar 25</span><span>Mar 30</span><span>Apr 3</span>
+                      </div>
+                    </div>
+
+                    {/* Quick Stats */}
+                    <div className="space-y-4">
+                      {/* Messages Widget */}
+                      <div className="bg-white border border-gray-200 rounded-xl p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Icon name="inbox" size={16} />
+                          <h3 className="font-medium text-gray-900 text-sm">Messages</h3>
+                        </div>
+                        <div className="space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-500">Needs reply</span>
+                            <span className="text-sm font-semibold text-orange-600">{needsResponseCount}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-500">Total conversations</span>
+                            <span className="text-sm font-semibold text-gray-900">{messages.length}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-500">Avg response time</span>
+                            <span className="text-sm font-semibold text-gray-900">2.4h</span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setActiveTab('inbox')}
+                          className="w-full mt-3 text-xs text-blue-600 hover:text-blue-800 font-medium py-2 bg-blue-50 rounded-lg transition-colors"
+                        >
+                          View Inbox
+                        </button>
+                      </div>
+
+                      {/* Store Health */}
+                      <div className="bg-white border border-gray-200 rounded-xl p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Icon name="trending" size={16} />
+                          <h3 className="font-medium text-gray-900 text-sm">Store Health</h3>
+                        </div>
+                        <div className="space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-500">Active listings</span>
+                            <span className="text-sm font-semibold text-gray-900">142</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-500">Feedback score</span>
+                            <span className="text-sm font-semibold text-green-600">99.2%</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-500">Defect rate</span>
+                            <span className="text-sm font-semibold text-green-600">0.3%</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom Row */}
+                  <div className="grid lg:grid-cols-2 gap-4">
+                    {/* Recent Orders */}
+                    <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-5">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-medium text-gray-900">Recent Orders</h3>
+                        <button
+                          onClick={() => setActiveTab('orders')}
+                          className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                        >
+                          View all
+                        </button>
+                      </div>
+                      <div className="space-y-3">
+                        {[
+                          { buyer: 'ccwraps', item: 'Holographic Dragon Card Skin', price: '$5.49', status: 'Shipped', time: '2h ago' },
+                          { buyer: 'el_chupakabra', item: 'Custom Credit Card Skin x4', price: '$15.00', status: 'Delivered', time: '1d ago' },
+                          { buyer: 'monte.carlo79', item: 'Anime Card Skin - Naruto', price: '$4.99', status: 'Processing', time: '2d ago' },
+                          { buyer: 'vinyl_collector', item: 'Marble Rose Gold Skin', price: '$5.49', status: 'Shipped', time: '3d ago' },
+                        ].map((order, i) => (
+                          <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <Icon name="package" size={14} />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-sm text-gray-900 truncate">{order.item}</p>
+                                <p className="text-xs text-gray-500">{order.buyer}</p>
+                              </div>
+                            </div>
+                            <div className="text-right flex-shrink-0 ml-3">
+                              <p className="text-sm font-medium text-gray-900">{order.price}</p>
+                              <span className={`text-xs ${
+                                order.status === 'Delivered' ? 'text-green-600' :
+                                order.status === 'Shipped' ? 'text-blue-600' : 'text-orange-600'
+                              }`}>{order.status}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Top Selling Items */}
+                    <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-5">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-medium text-gray-900">Top Selling Items</h3>
+                        <span className="text-xs text-gray-500">Last 30 days</span>
+                      </div>
+                      <div className="space-y-3">
+                        {[
+                          { name: 'Holographic Dragon Card Skin', sold: 12, revenue: '$65.88' },
+                          { name: 'Anime Card Skin - Naruto Edition', sold: 8, revenue: '$39.92' },
+                          { name: 'Custom Credit Card Skin', sold: 6, revenue: '$32.94' },
+                          { name: 'Marble Effect - Rose Gold', sold: 5, revenue: '$27.45' },
+                        ].map((item, i) => (
+                          <div key={i} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
+                            <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 font-bold text-sm flex-shrink-0">
+                              {i + 1}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm text-gray-900 truncate">{item.name}</p>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <div className="flex-1 bg-gray-100 rounded-full h-1.5">
+                                  <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: `${(item.sold / 12) * 100}%` }}></div>
+                                </div>
+                                <span className="text-xs text-gray-500 flex-shrink-0">{item.sold} sold</span>
+                              </div>
+                            </div>
+                            <span className="text-sm font-medium text-gray-900 flex-shrink-0">{item.revenue}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'orders' && (
+                <div className="p-4 md:p-6 overflow-y-auto">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h1 className="text-xl font-semibold text-gray-900">Orders</h1>
+                      <p className="text-sm text-gray-500 mt-0.5">Manage and track your orders</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <select className="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-600 bg-white focus:outline-none focus:border-blue-500">
+                        <option>All orders</option>
+                        <option>Processing</option>
+                        <option>Shipped</option>
+                        <option>Delivered</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Orders Summary */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                    {[
+                      { label: 'Total Orders', value: '35', color: 'text-gray-900' },
+                      { label: 'Processing', value: '3', color: 'text-orange-600' },
+                      { label: 'Shipped', value: '8', color: 'text-blue-600' },
+                      { label: 'Delivered', value: '24', color: 'text-green-600' },
+                    ].map((stat, i) => (
+                      <div key={i} className="bg-white border border-gray-200 rounded-xl p-4 text-center">
+                        <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+                        <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Orders Table */}
+                  <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                    <div className="grid grid-cols-[1fr_1fr_auto_auto_auto] gap-4 px-4 py-3 bg-gray-50 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <span>Item</span><span>Buyer</span><span>Price</span><span>Status</span><span>Date</span>
+                    </div>
+                    {[
+                      { item: 'Holographic Dragon Card Skin', buyer: 'ccwraps', price: '$5.49', status: 'Shipped', date: 'Apr 3' },
+                      { item: 'Custom Credit Card Skin x4', buyer: 'el_chupakabra', price: '$15.00', status: 'Delivered', date: 'Apr 2' },
+                      { item: 'Anime Card Skin - Naruto', buyer: 'monte.carlo79', price: '$4.99', status: 'Processing', date: 'Apr 1' },
+                      { item: 'Marble Rose Gold Skin', buyer: 'vinyl_collector', price: '$5.49', status: 'Shipped', date: 'Mar 31' },
+                      { item: 'Carbon Fiber Card Skin', buyer: 'seanscards3', price: '$5.49', status: 'Delivered', date: 'Mar 30' },
+                      { item: 'Holographic Dragon Card Skin', buyer: 'techguy_mike', price: '$5.49', status: 'Delivered', date: 'Mar 29' },
+                      { item: 'Custom Design - Company Logo', buyer: 'sarah_designs', price: '$175.00', status: 'Delivered', date: 'Mar 28' },
+                      { item: 'Anime Card Skin - DBZ', buyer: 'card_lover22', price: '$4.99', status: 'Delivered', date: 'Mar 27' },
+                    ].map((order, i) => (
+                      <div key={i} className="grid grid-cols-[1fr_1fr_auto_auto_auto] gap-4 px-4 py-3 border-b border-gray-100 last:border-0 items-center hover:bg-gray-50 transition-colors">
+                        <span className="text-sm text-gray-900 truncate">{order.item}</span>
+                        <span className="text-sm text-gray-600">{order.buyer}</span>
+                        <span className="text-sm font-medium text-gray-900">{order.price}</span>
+                        <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                          order.status === 'Delivered' ? 'bg-green-50 text-green-700' :
+                          order.status === 'Shipped' ? 'bg-blue-50 text-blue-700' : 'bg-orange-50 text-orange-700'
+                        }`}>{order.status}</span>
+                        <span className="text-sm text-gray-500">{order.date}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className="text-center text-sm text-gray-400 mt-6">Order data will connect to eBay Fulfillment API</p>
+                </div>
+              )}
+
               {activeTab === 'inbox' && (
                 <>
                   {/* Inbox Header */}
