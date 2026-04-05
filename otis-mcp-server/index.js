@@ -187,8 +187,7 @@ server.tool(
           conversation_id,
           action_type: "message_sent",
           buyer_username: recipient_username,
-          message_text,
-          item_id: item_id || null,
+          details: message_text,
           status: "success",
           store_id: STORE_ID,
         }).catch((err) => console.error("Failed to log activity:", err));
