@@ -727,10 +727,17 @@
       const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
       const [accessToken, setAccessToken] = useState(null);
       const [selectedStore, setSelectedStore] = useState(null);
-      
+      const [otisActivities, setOtisActivities] = useState([]);
+      const [otisLastChecked, setOtisLastChecked] = useState(null);
+      const [otisStats, setOtisStats] = useState({ messagesSent: 0, tasksToday: 0, successRate: 100 });
+
       // Load stores from Supabase on mount
       useEffect(() => {
         loadStores();
+        loadOtisActivity();
+        // Refresh Otis activity every 60 seconds
+        const interval = setInterval(loadOtisActivity, 60000);
+        return () => clearInterval(interval);
       }, []);
       
       // Auto-select first connected store and load its messages
@@ -776,7 +783,73 @@
         }
         setLoadingStores(false);
       };
-      
+
+      const loadOtisActivity = async () => {
+        try {
+          // Fetch recent activity (last 48 hours, up to 20 entries)
+          const since = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+          const { data, error } = await supabase
+            .from('otis_activity')
+            .select('*')
+            .gte('created_at', since)
+            .order('created_at', { ascending: false })
+            .limit(20);
+
+          if (error) {
+            console.error('Error loading Otis activity:', error);
+            return;
+          }
+
+          if (data && data.length > 0) {
+            setOtisActivities(data);
+            setOtisLastChecked(new Date(data[0].created_at));
+
+            // Compute stats for today
+            const todayStart = new Date();
+            todayStart.setHours(0, 0, 0, 0);
+            const todayActivities = data.filter(a => new Date(a.created_at) >= todayStart);
+            const messagesSent = todayActivities.filter(a => a.action_type === 'message_sent').length;
+            const successCount = todayActivities.filter(a => a.status === 'success').length;
+            const totalCount = todayActivities.length;
+            setOtisStats({
+              messagesSent,
+              tasksToday: totalCount,
+              successRate: totalCount > 0 ? Math.round((successCount / totalCount) * 100) : 100,
+            });
+          }
+        } catch (err) {
+          console.error('Failed to load Otis activity:', err);
+        }
+      };
+
+      // Format relative time (e.g., "2h ago", "5m ago")
+      const formatTimeAgo = (dateStr) => {
+        const now = new Date();
+        const date = new Date(dateStr);
+        const diffMs = now - date;
+        const diffMin = Math.floor(diffMs / 60000);
+        const diffHr = Math.floor(diffMs / 3600000);
+        const diffDay = Math.floor(diffMs / 86400000);
+        if (diffMin < 1) return 'just now';
+        if (diffMin < 60) return diffMin + 'm ago';
+        if (diffHr < 24) return diffHr + 'h ago';
+        return diffDay + 'd ago';
+      };
+
+      // Map activity type to display info
+      const activityDisplay = (activity) => {
+        const typeMap = {
+          message_sent: { type: 'message', icon: 'send', label: `Replied to ${activity.buyer_username || 'buyer'}` },
+          daily_report: { type: 'report', icon: 'check', label: activity.details || 'Generated daily report' },
+          conversation_flagged: { type: 'alert', icon: 'alert', label: `Flagged conversation${activity.buyer_username ? ' with ' + activity.buyer_username : ''} for review` },
+          conversation_skipped: { type: 'report', icon: 'check', label: activity.details || 'Skipped conversation (no reply needed)' },
+          recommendation: { type: 'report', icon: 'check', label: activity.details || 'Made a recommendation' },
+          error: { type: 'alert', icon: 'alert', label: activity.details || 'Encountered an error' },
+        };
+        const info = typeMap[activity.action_type] || { type: 'report', icon: 'check', label: activity.details || activity.action_type };
+        return { action: activity.details || info.label, type: info.type };
+      };
+
       const loadMessages = async (refreshToken) => {
         setLoadingMessages(true);
         try {
@@ -1077,24 +1150,28 @@
                           <div className="flex items-center gap-2">
                             <h2 className="text-lg font-semibold">Otis</h2>
                             <span className="flex items-center gap-1 text-xs bg-white/20 px-2 py-0.5 rounded-full">
-                              <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
-                              Active
+                              <span className={`w-1.5 h-1.5 rounded-full ${otisLastChecked && (Date.now() - otisLastChecked < 4 * 3600000) ? 'bg-green-400' : 'bg-yellow-400'}`}></span>
+                              {otisLastChecked && (Date.now() - otisLastChecked < 4 * 3600000) ? 'Active' : 'Idle'}
                             </span>
                           </div>
-                          <p className="text-blue-100 text-sm mt-0.5">Your AI assistant handled 6 tasks today</p>
+                          <p className="text-blue-100 text-sm mt-0.5">
+                            {otisLastChecked
+                              ? `Last checked ${formatTimeAgo(otisLastChecked)} · ${otisStats.tasksToday} task${otisStats.tasksToday !== 1 ? 's' : ''} today`
+                              : 'Waiting for first heartbeat...'}
+                          </p>
                         </div>
                       </div>
                       <div className="hidden md:flex items-center gap-6 text-sm">
                         <div className="text-center">
-                          <p className="text-2xl font-bold">6</p>
+                          <p className="text-2xl font-bold">{otisStats.messagesSent}</p>
                           <p className="text-blue-200 text-xs">Messages sent</p>
                         </div>
                         <div className="text-center">
-                          <p className="text-2xl font-bold">12m</p>
-                          <p className="text-blue-200 text-xs">Avg response</p>
+                          <p className="text-2xl font-bold">{otisStats.tasksToday}</p>
+                          <p className="text-blue-200 text-xs">Tasks today</p>
                         </div>
                         <div className="text-center">
-                          <p className="text-2xl font-bold">100%</p>
+                          <p className="text-2xl font-bold">{otisStats.successRate}%</p>
                           <p className="text-blue-200 text-xs">Success rate</p>
                         </div>
                       </div>
@@ -1107,14 +1184,13 @@
                         <button className="text-xs text-blue-200 hover:text-white transition-colors">View full log</button>
                       </div>
                       <div className="space-y-2">
-                        {[
-                          { action: 'Replied to ccwraps regarding shipping status inquiry', time: '2h ago', type: 'message' },
-                          { action: 'Replied to el_chupakabra with order confirmation details', time: '3h ago', type: 'message' },
-                          { action: 'Generated daily sales report for April 2', time: '8h ago', type: 'report' },
-                          { action: 'Replied to monte.carlo79 regarding restocking timeline', time: '12h ago', type: 'message' },
-                          { action: 'Flagged return request from sarah_designs for review', time: '1d ago', type: 'alert' },
-                        ].map((activity, i) => (
-                          <div key={i} className="flex items-center gap-3 bg-white/10 rounded-lg px-3 py-2">
+                        {(otisActivities.length > 0 ? otisActivities.slice(0, 5).map(a => {
+                          const display = activityDisplay(a);
+                          return { action: display.action, time: formatTimeAgo(a.created_at), type: display.type, key: a.id };
+                        }) : [
+                          { action: 'Waiting for first heartbeat...', time: '', type: 'report', key: 'placeholder' },
+                        ]).map((activity) => (
+                          <div key={activity.key} className="flex items-center gap-3 bg-white/10 rounded-lg px-3 py-2">
                             <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
                               activity.type === 'message' ? 'bg-blue-400/30' :
                               activity.type === 'report' ? 'bg-green-400/30' : 'bg-orange-400/30'
