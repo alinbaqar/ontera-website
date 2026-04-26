@@ -11,15 +11,14 @@
  *   - Logging Otis activity to Supabase
  *   - Checking if Otis already replied (deduplication)
  *
- * Runs as a persistent HTTP service on port 3001 (StreamableHTTP transport).
- * OpenClaw connects via URL instead of spawning a new process per session —
- * this prevents the MCP process leak that occurred with stdio transport.
+ * Communicates via stdio (standard MCP transport for OpenClaw).
+ * Auto-exits after 90 seconds of inactivity so processes don't accumulate
+ * when OpenClaw spawns a new one per webhook-triggered session.
  * All eBay calls go through the Cloudflare Worker proxy.
  */
 
-import http from "http";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 
@@ -318,47 +317,26 @@ server.tool(
   }
 );
 
-// ─── Start HTTP Server ───────────────────────────────────────────────────────
+// ─── Auto-exit: prevent process accumulation ────────────────────────────────
+// OpenClaw spawns a new MCP process per webhook-triggered session and doesn't
+// always clean them up. We exit after 90s of inactivity (no stdin messages),
+// or immediately when OpenClaw closes the connection.
 
-const PORT = parseInt(process.env.MCP_PORT || "3001");
+let inactivityTimer;
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => process.exit(0), 90_000);
+}
+process.stdin.on('close', () => process.exit(0));
+process.stdin.on('data', resetInactivityTimer);
+resetInactivityTimer();
+
+// ─── Start Server ───────────────────────────────────────────────────────────
 
 async function main() {
-  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+  const transport = new StdioServerTransport();
   await server.connect(transport);
-
-  const httpServer = http.createServer((req, res) => {
-    if (req.url === "/mcp") {
-      if (req.method === "POST") {
-        let raw = "";
-        req.on("data", chunk => { raw += chunk; });
-        req.on("end", async () => {
-          try {
-            await transport.handleRequest(req, res, JSON.parse(raw));
-          } catch (err) {
-            if (!res.headersSent) {
-              res.writeHead(400, { "Content-Type": "application/json" });
-              res.end(JSON.stringify({ error: err.message }));
-            }
-          }
-        });
-      } else if (req.method === "GET") {
-        transport.handleRequest(req, res).catch(() => {
-          if (!res.headersSent) { res.writeHead(500); res.end(); }
-        });
-      } else {
-        res.writeHead(405); res.end();
-      }
-    } else if (req.url === "/health") {
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: true }));
-    } else {
-      res.writeHead(404); res.end();
-    }
-  });
-
-  httpServer.listen(PORT, "127.0.0.1", () => {
-    console.error(`Otis eBay MCP server running on http://127.0.0.1:${PORT}/mcp`);
-  });
+  console.error("Otis eBay MCP server running on stdio");
 }
 
 main().catch((err) => {
