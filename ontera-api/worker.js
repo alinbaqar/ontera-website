@@ -329,7 +329,7 @@ export default {
                   timeoutSeconds: 120,
                 }),
               }).catch(err => {
-                console.error('Failed to forward to OpenClaw:', err);
+                console.error('Failed to forward to OpenClaw:', err.message);
               })
             );
           }
