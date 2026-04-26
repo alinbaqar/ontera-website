@@ -11,12 +11,15 @@
  *   - Logging Otis activity to Supabase
  *   - Checking if Otis already replied (deduplication)
  *
- * Communicates via stdio (standard MCP transport for OpenClaw).
+ * Runs as a persistent HTTP service on port 3001 (StreamableHTTP transport).
+ * OpenClaw connects via URL instead of spawning a new process per session —
+ * this prevents the MCP process leak that occurred with stdio transport.
  * All eBay calls go through the Cloudflare Worker proxy.
  */
 
+import http from "http";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 
@@ -315,12 +318,47 @@ server.tool(
   }
 );
 
-// ─── Start Server ───────────────────────────────────────────────────────────
+// ─── Start HTTP Server ───────────────────────────────────────────────────────
+
+const PORT = parseInt(process.env.MCP_PORT || "3001");
 
 async function main() {
-  const transport = new StdioServerTransport();
+  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
   await server.connect(transport);
-  console.error("Otis eBay MCP server running on stdio");
+
+  const httpServer = http.createServer((req, res) => {
+    if (req.url === "/mcp") {
+      if (req.method === "POST") {
+        let raw = "";
+        req.on("data", chunk => { raw += chunk; });
+        req.on("end", async () => {
+          try {
+            await transport.handleRequest(req, res, JSON.parse(raw));
+          } catch (err) {
+            if (!res.headersSent) {
+              res.writeHead(400, { "Content-Type": "application/json" });
+              res.end(JSON.stringify({ error: err.message }));
+            }
+          }
+        });
+      } else if (req.method === "GET") {
+        transport.handleRequest(req, res).catch(() => {
+          if (!res.headersSent) { res.writeHead(500); res.end(); }
+        });
+      } else {
+        res.writeHead(405); res.end();
+      }
+    } else if (req.url === "/health") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: true }));
+    } else {
+      res.writeHead(404); res.end();
+    }
+  });
+
+  httpServer.listen(PORT, "127.0.0.1", () => {
+    console.error(`Otis eBay MCP server running on http://127.0.0.1:${PORT}/mcp`);
+  });
 }
 
 main().catch((err) => {
