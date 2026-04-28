@@ -326,7 +326,6 @@ export default {
                 body: JSON.stringify({
                   message: `New eBay message notification received. Run the HEARTBEAT.md workflow: refresh token, check all conversations, reply where needed, log all actions. Notification payload: ${body.substring(0, 500)}`,
                   name: 'otis-webhook-trigger',
-                  timeoutSeconds: 120,
                 }),
               }).catch(err => {
                 console.error('Failed to forward to OpenClaw:', err.message);
