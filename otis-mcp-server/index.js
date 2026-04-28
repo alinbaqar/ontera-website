@@ -325,7 +325,7 @@ server.tool(
 let inactivityTimer;
 function resetInactivityTimer() {
   clearTimeout(inactivityTimer);
-  inactivityTimer = setTimeout(() => process.exit(0), 90_000);
+  inactivityTimer = setTimeout(() => process.exit(0), 300_000);
 }
 process.stdin.on('close', () => process.exit(0));
 process.stdin.on('data', resetInactivityTimer);
