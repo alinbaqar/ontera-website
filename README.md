@@ -1,28 +1,43 @@
 # OnteraAI
 
-AI-powered automation platform for e-commerce sellers. Handles customer messages, listing creation, and store operations across eBay, Amazon, Shopify, and more.
+AI-powered customer service agent for eBay sellers. Otis — the AI agent — monitors your eBay inbox, reads buyer messages, and sends replies automatically, 24/7.
 
 🌐 **Website:** [ontera.io](https://ontera.io)
 
 ---
 
-## Overview
+## What It Does
 
-OnteraAI replaces expensive virtual assistants ($500-2,000/month) with an AI agent that works 24/7 for a flat monthly fee. 
+OnteraAI runs **Otis**, an AI agent that handles eBay customer messages so sellers don't have to. When a buyer sends a message, Otis picks it up in real time, reads the full conversation thread, and replies with a helpful, on-brand response — typically within minutes.
 
-**Core Features:**
-- 💬 **AI Inbox** — Responds to customer messages within the hour
-- 📦 **Listing Automation** — Generate listings from product photos
-- 📊 **Daily Briefings** — Sales summaries and action items delivered daily
-- 🔄 **Refund Autopilot** — Handle routine refunds based on your rules
-- 🎯 **Store Optimization** — SEO titles, pricing suggestions, storefront improvements
+**Current capabilities:**
+- 💬 **Real-time message handling** — eBay webhooks trigger Otis instantly when a new message arrives
+- 🔍 **Full thread context** — reads the entire conversation before replying, never repeats itself
+- 🧠 **Escalation detection** — flags disputes, frustrated buyers, and edge cases for the store owner
+- 📊 **Activity feed** — every action Otis takes is logged to the seller dashboard
+- 🔄 **Fallback cron** — runs every 3 hours as a safety net if webhooks miss anything
 
-**Supported Platforms:**
-- eBay
-- Amazon
-- Shopify
-- TikTok Shop
-- Etsy
+---
+
+## Architecture
+
+```
+eBay buyer message
+    ↓
+eBay webhook notification
+    ↓
+Cloudflare Worker (ontera-api)
+    ↓  [ctx.waitUntil — async, returns 200 to eBay immediately]
+Apache reverse proxy on VPS (port 80 → 18789)
+    ↓
+OpenClaw gateway (port 18789)
+    ↓  [triggers HEARTBEAT.md agent workflow]
+Otis AI agent (Claude via AWS Bedrock)
+    ↓  [uses otis-ebay MCP tools]
+eBay REST Messaging API → reply sent
+    ↓
+Supabase activity log → dashboard updated
+```
 
 ---
 
@@ -30,30 +45,62 @@ OnteraAI replaces expensive virtual assistants ($500-2,000/month) with an AI age
 
 ```
 /
-├── index.html          # Landing page
-├── /assets             # Images, icons, fonts (future)
-├── /dashboard          # Customer dashboard app (future)
-└── /docs               # Documentation (future)
+├── index.html               # Marketing landing page
+├── about.html
+├── dashboard.html           # Seller dashboard (React app)
+├── privacy.html
+├── terms.html
+├── waitlist.html
+│
+├── ontera-api/              # Cloudflare Worker
+│   ├── worker.js            # API + webhook handler
+│   └── wrangler.toml
+│
+├── otis-mcp-server/         # MCP server Otis uses as tools
+│   ├── index.js             # 7 tools: refresh_token, list_conversations,
+│   │                        # get_conversation_thread, send_reply,
+│   │                        # check_already_replied, log_activity,
+│   │                        # get_recent_activity
+│   └── package.json
+│
+└── openclaw-agent/          # Otis agent configuration
+    ├── SOUL.md              # Otis personality, tone, store guidelines
+    ├── HEARTBEAT.md         # Main workflow: check inbox → reply
+    └── CONVERSATION_GUIDE.md
 ```
 
 ---
 
-## Development
+## Stack
 
-This is a static site deployed via Cloudflare Pages.
+| Layer | Technology |
+|---|---|
+| AI agent runtime | [OpenClaw](https://openclaw.ai) on AWS Lightsail |
+| AI model | Claude Sonnet (AWS Bedrock) |
+| Worker / API proxy | Cloudflare Workers |
+| Auth & database | Supabase |
+| Frontend | Cloudflare Pages |
+| eBay integration | eBay REST Messaging API + OAuth2 |
 
-**Local development:**
+---
+
+## Deployment
+
+**Cloudflare Worker:**
 ```bash
-# Just open in browser
-open index.html
-
-# Or use a local server
-npx serve .
+cd ontera-api
+npx wrangler deploy
 ```
 
-**Deployment:**
-- Push to `main` branch
-- Cloudflare Pages auto-deploys
+**Frontend (dashboard + marketing site):**
+Push to `main` — Cloudflare Pages auto-deploys.
+
+**Otis (VPS):**
+```bash
+# On the VPS (Ubuntu, AWS Lightsail)
+cd ~/ontera-website && git pull
+openclaw gateway stop && sleep 2 && openclaw gateway start
+```
 
 ---
 
