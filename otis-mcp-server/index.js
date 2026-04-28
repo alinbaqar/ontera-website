@@ -185,14 +185,15 @@ server.tool(
     if (data.success) {
       // Auto-log the activity to Supabase
       if (supabase) {
-        await supabase.from("otis_activity").insert({
+        const { error: logErr } = await supabase.from("otis_activity").insert({
           conversation_id,
           action_type: "message_sent",
           buyer_username: recipient_username,
           details: message_text,
           status: "success",
           store_id: STORE_ID,
-        }).catch((err) => console.error("Failed to log activity:", err));
+        });
+        if (logErr) console.error("Failed to log activity:", logErr);
       }
 
       return { content: [{ type: "text", text: JSON.stringify({ success: true, message_id: data.messageId }) }] };
