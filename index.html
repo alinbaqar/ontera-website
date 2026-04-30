@@ -122,6 +122,20 @@
             color: var(--text-primary);
         }
 
+        .nav-login {
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: var(--text-primary) !important;
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .nav-login:hover {
+            border-color: rgba(255, 255, 255, 0.6) !important;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
         .nav-cta {
             background: var(--text-primary) !important;
             color: var(--bg-primary) !important;
@@ -866,6 +880,7 @@
                 <a href="#features">Features</a>
                 <a href="#pricing">Pricing</a>
                 <a href="#how-it-works">How It Works</a>
+                <a href="/dashboard" class="nav-login">Login</a>
                 <a href="#waitlist" class="nav-cta">Join Waitlist</a>
             </div>
         </div>
